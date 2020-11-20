@@ -36,7 +36,8 @@ namespace RxDataTests.Unit
             Assert.IsType<List<RxPrice>>(rxPrices);
             Assert.Equal(11, rxPrices.Count());
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
-            Assert.All(rxPrices, rp => Assert.True(rp.Price > 0));
+            Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 10));
+            Assert.All(rxPrices, rp => Assert.True(rp.Price > 50));
             Assert.All(rxPrices, rp => Assert.Equal("online", rp.Location));
             Assert.All(rxPrices, rp => Assert.Equal(2, rp.VendorId));
         }

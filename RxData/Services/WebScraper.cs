@@ -57,8 +57,12 @@ namespace RxData.Services
 
             foreach (var e in elements)
             {
+                int dose;
+                int.TryParse(e.QuerySelector("span.table__price_bold")?.TextContent
+                    .Trim('m', 'g'), out dose);
+
                 float price;
-                float.TryParse(e.QuerySelector("span.table__price")?.TextContent
+                float.TryParse(e.QuerySelector("div.table__price_row")?.TextContent
                     .Trim('$', ' ', 'U', 'S', 'D', ' ', '\n'), out price);
 
                 if (price > 0)
@@ -66,6 +70,7 @@ namespace RxData.Services
                     rxPrices.Add(new RxPrice
                     {
                         Name = medication.ToLower(),
+                        Dose = dose,
                         Price = price,
                         Location = "online",
                         VendorId = 2

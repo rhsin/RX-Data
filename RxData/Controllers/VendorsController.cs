@@ -22,7 +22,7 @@ namespace RxData.Controllers
 
         // POST: api/Vendors/Seeder
         [HttpPost("Seeder")]
-        public async Task<IActionResult> SeedVendors()
+        public async Task<ActionResult<string>> SeedVendors()
         {
             if (_context.Vendors.Any())
             {
