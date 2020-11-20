@@ -20,6 +20,27 @@ namespace RxData.Controllers
             _context = context;
         }
 
+        // POST: api/Vendors/Seeder
+        [HttpPost("Seeder")]
+        public async Task<IActionResult> SeedVendors()
+        {
+            if (_context.Vendors.Any())
+            {
+                return BadRequest("Vendors Already Seeded!");
+            }
+
+            var vendors = new List<Vendor>
+            {
+                new Vendor { Name = "SingleCare", Url = "https://www.singlecare.com" },
+                new Vendor { Name = "CanadaRx24h", Url = "https://canadarx24h.com/" }
+            };
+
+            _context.Vendors.AddRange(vendors);
+            await _context.SaveChangesAsync();
+
+            return Ok("Vendors Seeded Successfully!");
+        }
+
         // GET: api/Vendors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()

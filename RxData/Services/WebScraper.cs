@@ -8,6 +8,7 @@ namespace RxData.Services
     public interface IWebScraper
     {
         public Task<IEnumerable<RxPrice>> GetRxPrices(string medication);
+        public Task<IEnumerable<RxPrice>> GetRxPricesCanada(string medication);
     }
 
     public class WebScraper : IWebScraper
@@ -21,7 +22,7 @@ namespace RxData.Services
 
         public async Task<IEnumerable<RxPrice>> GetRxPrices(string medication)
         {
-            var source = $@"https://www.singlecare.com/prescription/{medication}";
+            var source = $"https://www.singlecare.com/prescription/{medication}";
             var document = await _context.OpenAsync(source);
             var elements = document.QuerySelectorAll("div.pharmacy-item");
             var rxPrices = new List<RxPrice>();
@@ -29,13 +30,47 @@ namespace RxData.Services
             foreach (var e in elements)
             {
                 float price; 
-                float.TryParse(e.QuerySelector("p.pharmacy-item__price")?.TextContent.Trim('$', ' '), out price);
+                float.TryParse(e.QuerySelector("p.pharmacy-item__price")?.TextContent
+                    .Trim('$', ' '), out price);
 
-                rxPrices.Add(new RxPrice
+                if (price > 0)
                 {
-                    Name = e.QuerySelector("img")?.GetAttribute("data-name"),
-                    Price = price
-                });
+                    rxPrices.Add(new RxPrice
+                    {
+                        Name = medication.ToLower(),
+                        Price = price,
+                        Location = e.QuerySelector("img")?.GetAttribute("data-name"),
+                        VendorId = 1
+                    });
+                }
+            }
+
+            return rxPrices;
+        }
+
+        public async Task<IEnumerable<RxPrice>> GetRxPricesCanada(string medication)
+        {
+            var source = $"https://canadarx24h.com/catalog/view?slug={medication}";
+            var document = await _context.OpenAsync(source);
+            var elements = document.QuerySelectorAll("tr");
+            var rxPrices = new List<RxPrice>();
+
+            foreach (var e in elements)
+            {
+                float price;
+                float.TryParse(e.QuerySelector("span.table__price")?.TextContent
+                    .Trim('$', ' ', 'U', 'S', 'D', ' ', '\n'), out price);
+
+                if (price > 0)
+                {
+                    rxPrices.Add(new RxPrice
+                    {
+                        Name = medication.ToLower(),
+                        Price = price,
+                        Location = "online",
+                        VendorId = 2
+                    });
+                }
             }
 
             return rxPrices;
