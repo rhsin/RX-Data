@@ -30,6 +30,7 @@ namespace RxDataTests.Integration
             Assert.Equal(2, vendors.Count());
             Assert.Contains("SingleCare", stringResponse);
             Assert.Contains("CanadaRx24h", stringResponse);
+            Assert.Contains("baclofen", stringResponse);
         }
 
         [Fact]
@@ -42,6 +43,8 @@ namespace RxDataTests.Integration
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("SingleCare", vendor.Name);
             Assert.Equal("https://www.singlecare.com", vendor.Url);
+            Assert.Contains("baclofen", stringResponse);
+            Assert.Contains("geniusrx", stringResponse);
         }
 
         [Fact]

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using RxData.Data;
 using RxData.Models;
-using RxData.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,14 +44,18 @@ namespace RxData.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()
         {
-            return await _context.Vendors.ToListAsync();
+            return await _context.Vendors
+                .Include(v => v.RxPrices)
+                .ToListAsync();
         }
 
         // GET: api/Vendors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Vendor>> GetVendor(int id)
         {
-            var vendor = await _context.Vendors.FindAsync(id);
+            var vendor = await _context.Vendors
+                .Include(v => v.RxPrices)
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vendor == null)
             {

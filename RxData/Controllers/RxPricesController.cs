@@ -36,6 +36,25 @@ namespace RxData.Controllers
             return Ok(await _webScraper.GetRxPricesCanada(medication));
         }
 
+        // POST: api/RxPrices/Seeder/Baclofen
+        [HttpPost("Seeder/{medication}")]
+        public async Task<ActionResult<string>> SeedRxPrices(string medication)
+        {
+            if (RxPriceSeeded(medication))
+            {
+                return BadRequest($"RxPrices Already Seeded: {medication}!");
+            }
+
+            var rxPrices = await _webScraper.GetRxPrices(medication);
+            var rxPricesCanada = await _webScraper.GetRxPricesCanada(medication);
+
+            _context.RxPrices.AddRange(rxPrices);
+            _context.RxPrices.AddRange(rxPricesCanada);
+            await _context.SaveChangesAsync();
+
+            return Ok($"RxPrices Seeded Successfully: {medication}!");
+        }
+
         // GET: api/RxPrices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPrices()
@@ -116,6 +135,11 @@ namespace RxData.Controllers
         private bool RxPriceExists(int id)
         {
             return _context.RxPrices.Any(e => e.Id == id);
+        }
+
+        private bool RxPriceSeeded(string medication)
+        {
+            return _context.RxPrices.Any(rp => rp.Name == medication.ToLower());
         }
     }
 }

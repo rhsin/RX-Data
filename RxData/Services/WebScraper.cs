@@ -26,11 +26,21 @@ namespace RxData.Services
             var source = $"https://www.singlecare.com/prescription/{medication}";
             var document = await _context.OpenAsync(source);
             var elements = document.QuerySelectorAll("div.pharmacy-item");
+
+            var details = document.QuerySelector("span.filter-amt--qty")?.TextContent
+                .Split("Tablet,");
+
+            int quantity;
+            int.TryParse(details[0].Trim(), out quantity);
+
+            int dose;
+            int.TryParse(details[1].Trim().Replace("mg", ""), out dose);
+
             var rxPrices = new List<RxPrice>();
 
             foreach (var e in elements)
             {
-                float price; 
+                float price;
                 float.TryParse(e.QuerySelector("p.pharmacy-item__price")?.TextContent
                     .Trim('$', ' '), out price);
 
@@ -39,6 +49,8 @@ namespace RxData.Services
                     rxPrices.Add(new RxPrice
                     {
                         Name = medication.ToLower(),
+                        Quantity = quantity,
+                        Dose = dose,
                         Price = price,
                         Location = e.QuerySelector("img")?.GetAttribute("data-name"),
                         VendorId = 1
@@ -54,26 +66,28 @@ namespace RxData.Services
             var source = $"https://canadarx24h.com/catalog/view?slug={medication}";
             var document = await _context.OpenAsync(source);
             var elements = document.QuerySelectorAll("tr");
+
             var rxPrices = new List<RxPrice>();
 
             foreach (var e in elements)
             {
-                try
+                int quantity;
+                int.TryParse(e.QuerySelectorAll("span.table__price_bold")
+                    .LastOrDefault()?.TextContent
+                    .Replace(" Pills", ""), out quantity);
+
+                int dose;
+                int.TryParse(e.QuerySelectorAll("span.table__price_bold")
+                    .FirstOrDefault()?.TextContent
+                    .Replace("mg", ""), out dose);
+
+                float price;
+                float.TryParse(e.QuerySelector("div.table__price_row")?.TextContent
+                    .Trim('$', ' ', '\n')
+                    .Replace("USD", ""), out price);
+
+                if (price > 0)
                 {
-                    int quantity;
-                    int.TryParse(e.QuerySelectorAll("span.table__price_bold")?
-                        .Last().TextContent
-                        .Trim(' ', 'P', 'i', 'l', 's'), out quantity);
-
-                    int dose;
-                    int.TryParse(e.QuerySelectorAll("span.table__price_bold")?
-                        .First().TextContent
-                        .Trim('m', 'g'), out dose);
-
-                    float price;
-                    float.TryParse(e.QuerySelector("div.table__price_row")?.TextContent
-                        .Trim('$', ' ', 'U', 'S', 'D', ' ', '\n'), out price);
-
                     rxPrices.Add(new RxPrice
                     {
                         Name = medication.ToLower(),
@@ -83,10 +97,6 @@ namespace RxData.Services
                         Location = "online",
                         VendorId = 2
                     });
-                }
-                catch
-                {
-                    continue;
                 }
             }
 
