@@ -1,6 +1,7 @@
 ﻿using AngleSharp;
 using RxData.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RxData.Services
@@ -57,24 +58,35 @@ namespace RxData.Services
 
             foreach (var e in elements)
             {
-                int dose;
-                int.TryParse(e.QuerySelector("span.table__price_bold")?.TextContent
-                    .Trim('m', 'g'), out dose);
-
-                float price;
-                float.TryParse(e.QuerySelector("div.table__price_row")?.TextContent
-                    .Trim('$', ' ', 'U', 'S', 'D', ' ', '\n'), out price);
-
-                if (price > 0)
+                try
                 {
+                    int quantity;
+                    int.TryParse(e.QuerySelectorAll("span.table__price_bold")?
+                        .Last().TextContent
+                        .Trim(' ', 'P', 'i', 'l', 's'), out quantity);
+
+                    int dose;
+                    int.TryParse(e.QuerySelectorAll("span.table__price_bold")?
+                        .First().TextContent
+                        .Trim('m', 'g'), out dose);
+
+                    float price;
+                    float.TryParse(e.QuerySelector("div.table__price_row")?.TextContent
+                        .Trim('$', ' ', 'U', 'S', 'D', ' ', '\n'), out price);
+
                     rxPrices.Add(new RxPrice
                     {
                         Name = medication.ToLower(),
+                        Quantity = quantity,
                         Dose = dose,
                         Price = price,
                         Location = "online",
                         VendorId = 2
                     });
+                }
+                catch
+                {
+                    continue;
                 }
             }
 
