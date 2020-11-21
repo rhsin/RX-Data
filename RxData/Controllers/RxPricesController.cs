@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RxData.Data;
 using RxData.Models;
+using RxData.Repositories;
 using RxData.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +12,12 @@ namespace RxData.Controllers
     [ApiController]
     public class RxPricesController : ControllerBase
     {
-        private readonly RxContext _context;
+        private readonly IRxPriceRepository _rxPriceRepository;
         private readonly IWebScraper _webScraper;
 
-        public RxPricesController(RxContext context, IWebScraper webScraper)
+        public RxPricesController(IRxPriceRepository rxPriceRepository, IWebScraper webScraper)
         {
-            _context = context;
+            _rxPriceRepository = rxPriceRepository;
             _webScraper = webScraper;
         }
 
@@ -40,17 +39,12 @@ namespace RxData.Controllers
         [HttpPost("Seeder/{medication}")]
         public async Task<ActionResult<string>> SeedRxPrices(string medication)
         {
-            if (RxPriceSeeded(medication))
+            if (_rxPriceRepository.RxPricesSeeded(medication))
             {
                 return BadRequest($"RxPrices Already Seeded: {medication}!");
             }
 
-            var rxPrices = await _webScraper.GetRxPrices(medication);
-            var rxPricesCanada = await _webScraper.GetRxPricesCanada(medication);
-
-            _context.RxPrices.AddRange(rxPrices);
-            _context.RxPrices.AddRange(rxPricesCanada);
-            await _context.SaveChangesAsync();
+            await _rxPriceRepository.SeedRxPrices(medication);
 
             return Ok($"RxPrices Seeded Successfully: {medication}!");
         }
@@ -59,14 +53,15 @@ namespace RxData.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPrices()
         {
-            return await _context.RxPrices.ToListAsync();
+            return Ok(await _rxPriceRepository.GetAll());
         }
 
         // GET: api/RxPrices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RxPrice>> GetRxPrice(int id)
         {
-            var rxPrice = await _context.RxPrices.FindAsync(id);
+            var rxPrices = await _rxPriceRepository.GetAll();
+            var rxPrice = rxPrices.FirstOrDefault(rp => rp.Id == id);
 
             if (rxPrice == null)
             {
@@ -85,23 +80,7 @@ namespace RxData.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(rxPrice).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RxPriceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _rxPriceRepository.Update(rxPrice);
 
             return NoContent();
         }
@@ -110,8 +89,7 @@ namespace RxData.Controllers
         [HttpPost]
         public async Task<ActionResult<RxPrice>> PostRxPrice(RxPrice rxPrice)
         {
-            _context.RxPrices.Add(rxPrice);
-            await _context.SaveChangesAsync();
+            await _rxPriceRepository.Create(rxPrice);
 
             return CreatedAtAction("GetRxPrice", new { id = rxPrice.Id }, rxPrice);
         }
@@ -120,26 +98,9 @@ namespace RxData.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<RxPrice>> DeleteRxPrice(int id)
         {
-            var rxPrice = await _context.RxPrices.FindAsync(id);
-            if (rxPrice == null)
-            {
-                return NotFound();
-            }
+            await _rxPriceRepository.Delete(id);
 
-            _context.RxPrices.Remove(rxPrice);
-            await _context.SaveChangesAsync();
-
-            return rxPrice;
-        }
-
-        private bool RxPriceExists(int id)
-        {
-            return _context.RxPrices.Any(e => e.Id == id);
-        }
-
-        private bool RxPriceSeeded(string medication)
-        {
-            return _context.RxPrices.Any(rp => rp.Name == medication.ToLower());
+            return NoContent();
         }
     }
 }

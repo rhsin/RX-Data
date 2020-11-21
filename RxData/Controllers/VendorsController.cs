@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RxData.Data;
 using RxData.Models;
+using RxData.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,30 +11,23 @@ namespace RxData.Controllers
     [ApiController]
     public class VendorsController : ControllerBase
     {
-        private readonly RxContext _context;
+        private readonly IVendorRepository _vendorRepository;
 
-        public VendorsController(RxContext context)
+        public VendorsController(IVendorRepository vendorRepository)
         {
-            _context = context;
+            _vendorRepository = vendorRepository;
         }
 
         // POST: api/Vendors/Seeder
         [HttpPost("Seeder")]
         public async Task<ActionResult<string>> SeedVendors()
         {
-            if (_context.Vendors.Any())
+            if (_vendorRepository.VendorsSeeded())
             {
                 return BadRequest("Vendors Already Seeded!");
             }
 
-            var vendors = new List<Vendor>
-            {
-                new Vendor { Name = "SingleCare", Url = "https://www.singlecare.com" },
-                new Vendor { Name = "CanadaRx24h", Url = "https://canadarx24h.com/" }
-            };
-
-            _context.Vendors.AddRange(vendors);
-            await _context.SaveChangesAsync();
+            await _vendorRepository.SeedVendors();
 
             return Ok("Vendors Seeded Successfully!");
         }
@@ -44,18 +36,15 @@ namespace RxData.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()
         {
-            return await _context.Vendors
-                .Include(v => v.RxPrices)
-                .ToListAsync();
+            return Ok(await _vendorRepository.GetAll());
         }
 
         // GET: api/Vendors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Vendor>> GetVendor(int id)
         {
-            var vendor = await _context.Vendors
-                .Include(v => v.RxPrices)
-                .FirstOrDefaultAsync(v => v.Id == id);
+            var vendors = await _vendorRepository.GetAll();
+            var vendor = vendors.FirstOrDefault(vendor => vendor.Id == id);
 
             if (vendor == null)
             {
@@ -74,23 +63,7 @@ namespace RxData.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(vendor).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VendorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _vendorRepository.Update(vendor);
 
             return NoContent();
         }
@@ -99,8 +72,7 @@ namespace RxData.Controllers
         [HttpPost]
         public async Task<ActionResult<Vendor>> PostVendor(Vendor vendor)
         {
-            _context.Vendors.Add(vendor);
-            await _context.SaveChangesAsync();
+            await _vendorRepository.Create(vendor);
 
             return CreatedAtAction("GetVendor", new { id = vendor.Id }, vendor);
         }
@@ -109,21 +81,9 @@ namespace RxData.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Vendor>> DeleteVendor(int id)
         {
-            var vendor = await _context.Vendors.FindAsync(id);
-            if (vendor == null)
-            {
-                return NotFound();
-            }
+            await _vendorRepository.Delete(id);
 
-            _context.Vendors.Remove(vendor);
-            await _context.SaveChangesAsync();
-
-            return vendor;
-        }
-
-        private bool VendorExists(int id)
-        {
-            return _context.Vendors.Any(e => e.Id == id);
+            return NoContent();
         }
     }
 }
