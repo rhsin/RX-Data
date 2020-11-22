@@ -28,7 +28,7 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(rxPrices.Count() > 15);
+            Assert.True(rxPrices.Count() >= 50);
             Assert.All(rxPrices, rp => Assert.NotNull(rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity > 0));
             Assert.All(rxPrices, rp => Assert.True(rp.Price > 0));
@@ -57,7 +57,7 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(rxPrices.Count() > 5);
+            Assert.True(rxPrices.Count() >= 5);
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
             Assert.All(rxPrices, rp => Assert.True(rp.Price > 12));
@@ -72,7 +72,7 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(rxPrices.Count() > 10);
+            Assert.True(rxPrices.Count() >= 10);
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 30));
             Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 10));
@@ -95,9 +95,25 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
+        public async Task FindMedication()
+        {
+            var response = await _client.GetAsync(
+                "api/RxPrices/Medication?name=zanaflex&location=walmart&price=13");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var rxPrices = JsonConvert.DeserializeObject<RxPriceDTO>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("Get Medication: zanaflex", rxPrices.Method);
+            Assert.True(rxPrices.RxPrices.Count() >= 2);
+            Assert.Contains("zanaflex", stringResponse);
+            Assert.Contains("walmart", stringResponse);
+            Assert.Contains("SingleCare", stringResponse);
+        }
+
+        [Fact]
         public async Task GetRxPricesPerMg()
         {
-            var response = await _client.GetAsync("api/RxPrices/Price/Mg");
+            var response = await _client.GetAsync("api/RxPrices/Price/Mg?name=baclofen");
             var stringResponse = await response.Content.ReadAsStringAsync();
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 

@@ -15,7 +15,9 @@ namespace RxData.Repositories
     public interface IRxPriceRepository
     {
         public Task<IEnumerable<RxPrice>> GetAll();
+        public Task<IEnumerable<RxPrice>> GetMedication(string name);
         public Task<RxPriceDTO> FindBy(string name, string column, string value);
+        public Task<RxPriceDTO> FindMedication(string name, string location, float price);
         public Task Create(RxPrice rxPrice);
         public Task Update(RxPrice rxPrice);
         public Task Delete(int id);
@@ -39,6 +41,13 @@ namespace RxData.Repositories
         public async Task<IEnumerable<RxPrice>> GetAll()
         {
             return await _context.RxPrices.ToListAsync();
+        }
+
+        public async Task<IEnumerable<RxPrice>> GetMedication(string name)
+        {
+            return await _context.RxPrices
+                .Where(rp => rp.Name == name)
+                .ToListAsync();
         }
 
         public async Task<RxPriceDTO> FindBy(string name, string column, string value)
@@ -66,6 +75,35 @@ namespace RxData.Repositories
                 var rxPriceDTO = new RxPriceDTO
                 {
                     Method = $"Find {name} By {column}: {value}",
+                    Count = rxPrices.Count(),
+                    RxPrices = rxPrices
+                };
+
+                return rxPriceDTO;
+            }
+        }
+
+        public async Task<RxPriceDTO> FindMedication(string name, string location, float price)
+        {
+            var parameters = new { Name = $"%{name}%", Location = $"%{location}%", Price = price };
+
+            var sql = $@"SELECT rp.Id, rp.Name, rp.Quantity, rp.Dose, rp.Price, 
+                         rp.Location, v.Id AS VendorId, v.Name AS Vendor, v.Url
+                         FROM RxPrices AS rp
+                         INNER JOIN Vendors AS v
+                         ON rp.VendorId = v.Id
+                         WHERE LOWER(rp.Name) LIKE LOWER(@Name)
+                         AND LOWER(rp.Location) LIKE LOWER(@Location)
+                         AND rp.Price <= @Price
+                         ORDER BY rp.Price";
+
+            using (var connection = new SqlConnection(_config.GetConnectionString("Default")))
+            {
+                var rxPrices = await connection.QueryAsync(sql, parameters);
+
+                var rxPriceDTO = new RxPriceDTO
+                {
+                    Method = $"Get Medication: {name}",
                     Count = rxPrices.Count(),
                     RxPrices = rxPrices
                 };
@@ -107,16 +145,6 @@ namespace RxData.Repositories
         public bool RxPricesSeeded(string medication)
         {
             return _context.RxPrices.Any(rp => rp.Name == medication.ToLower());
-        }
-
-        private async Task<IEnumerable<RxPrice>> ExecuteRxPriceQuery(string sql, object parameters)
-        {
-            using (var connection = new SqlConnection(_config.GetConnectionString("Default")))
-            {
-                var rxPrices = await connection.QueryAsync<RxPrice>(sql, parameters);
-
-                return rxPrices;
-            }
         }
     }
 }

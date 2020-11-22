@@ -45,11 +45,18 @@ namespace RxData.Controllers
             return Ok(await _rxPriceRepository.FindBy(name, column, value));
         }
 
+        // GET: api/RxPrices/Medication
+        [HttpGet("Medication")]
+        public async Task<ActionResult<RxPriceDTO>> FindMedication(string name, string location, float price)
+        {
+            return Ok(await _rxPriceRepository.FindMedication(name, location, price));
+        }
+
         // GET: api/RxPrices/Price/Mg
         [HttpGet("Price/Mg")]
-        public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPricesPerMg()
+        public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPricesPerMg(string name)
         {
-            var rxPrices = await _rxPriceRepository.GetAll();
+            var rxPrices = await _rxPriceRepository.GetMedication(name);
 
             return Ok(_priceCalculator.PricePerMg(rxPrices));
         }
