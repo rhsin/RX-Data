@@ -38,5 +38,27 @@ namespace RxDataTests.Unit
             Assert.All(rxPrices, rp => Assert.Equal("online", rp.Location));
             Assert.All(rxPrices, rp => Assert.Equal(2, rp.VendorId));
         }
+
+        [Theory]
+        [InlineData("text10")]
+        [InlineData("$10 USD")]
+        [InlineData("10mg")]
+        public void GetInteger(string input)
+        {
+            var result = _webScraper.GetInteger(input);
+
+            Assert.Equal(10, result);
+        }
+
+        [Theory]
+        [InlineData("text15.50")]
+        [InlineData("$15.50 USD")]
+        [InlineData("15.50mg")]
+        public void GetFloat(string input)
+        {
+            var result = _webScraper.GetFloat(input);
+
+            Assert.Equal(15.50, result);
+        }
     }
 }

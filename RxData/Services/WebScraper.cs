@@ -2,6 +2,7 @@
 using RxData.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RxData.Services
@@ -10,6 +11,8 @@ namespace RxData.Services
     {
         public Task<IEnumerable<RxPrice>> GetRxPrices(string medication);
         public Task<IEnumerable<RxPrice>> GetRxPricesCanada(string medication);
+        public int GetInteger(string input);
+        public float GetFloat(string input);
     }
 
     public class WebScraper : IWebScraper
@@ -26,23 +29,17 @@ namespace RxData.Services
             var source = $"https://www.singlecare.com/prescription/{medication}";
             var document = await _context.OpenAsync(source);
             var elements = document.QuerySelectorAll("div.pharmacy-item");
+            var text = document.QuerySelector("span.filter-amt--qty")?.TextContent.Split();
 
-            var details = document.QuerySelector("span.filter-amt--qty")?.TextContent
-                .Split("Tablet,");
+            int quantity = this.GetInteger(text.FirstOrDefault());
 
-            int quantity;
-            int.TryParse(details[0].Trim(), out quantity);
-
-            int dose;
-            int.TryParse(details[1].Trim().Replace("mg", ""), out dose);
+            int dose = this.GetInteger(text.LastOrDefault());
 
             var rxPrices = new List<RxPrice>();
 
             foreach (var e in elements)
             {
-                float price;
-                float.TryParse(e.QuerySelector("p.pharmacy-item__price")?.TextContent
-                    .Trim('$', ' '), out price);
+                float price = this.GetFloat(e.QuerySelector("p.pharmacy-item__price")?.TextContent);
 
                 if (price > 0)
                 {
@@ -71,20 +68,13 @@ namespace RxData.Services
 
             foreach (var e in elements)
             {
-                int quantity;
-                int.TryParse(e.QuerySelectorAll("span.table__price_bold")
-                    .LastOrDefault()?.TextContent
-                    .Replace(" Pills", ""), out quantity);
+                int quantity = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
+                    .LastOrDefault()?.TextContent);
 
-                int dose;
-                int.TryParse(e.QuerySelectorAll("span.table__price_bold")
-                    .FirstOrDefault()?.TextContent
-                    .Replace("mg", ""), out dose);
+                int dose = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
+                    .FirstOrDefault()?.TextContent);
 
-                float price;
-                float.TryParse(e.QuerySelector("div.table__price_row")?.TextContent
-                    .Trim('$', ' ', '\n')
-                    .Replace("USD", ""), out price);
+                float price = this.GetFloat(e.QuerySelector("div.table__price_row")?.TextContent);
 
                 if (price > 0)
                 {
@@ -101,6 +91,36 @@ namespace RxData.Services
             }
 
             return rxPrices;
+        }
+
+        public int GetInteger(string input)
+        {
+            if (input == null)
+            {
+                return 0;
+            }
+
+            var regex = new Regex(@"[^\d.]");
+
+            int result;
+            int.TryParse(regex.Replace(input, ""), out result);
+
+            return result;
+        }
+
+        public float GetFloat(string input)
+        {
+            if (input == null)
+            {
+                return 0;
+            }
+
+            var regex = new Regex(@"[^\d.]");
+
+            float result;
+            float.TryParse(regex.Replace(input, ""), out result);
+
+            return result;
         }
     }
 }

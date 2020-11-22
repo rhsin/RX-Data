@@ -50,14 +50,14 @@ namespace RxData.Repositories
 
             var parameters = new { Name = $"%{name}%", Value = value };
 
-            var sql = $@"SELECT rp.Id, rp.Name, rp.Quantity, rp.Dose, rp.Location,
-                         v.Id AS VendorId, v.Name AS Vendor, v.Url
+            var sql = $@"SELECT rp.Id, rp.Name, rp.Quantity, rp.Dose, rp.Price, 
+                         rp.Location, v.Id AS VendorId, v.Name AS Vendor, v.Url
                          FROM RxPrices AS rp
                          INNER JOIN Vendors AS v
                          ON rp.VendorId = v.Id
                          WHERE LOWER(rp.Name) LIKE LOWER(@Name)
                          AND rp.{column} = @Value
-                         ORDER BY rp.{column}";
+                         ORDER BY rp.Price";
 
             using (var connection = new SqlConnection(_config.GetConnectionString("Default")))
             {
