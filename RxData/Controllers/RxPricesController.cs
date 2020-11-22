@@ -38,6 +38,13 @@ namespace RxData.Controllers
             return Ok(await _webScraper.GetRxPricesCanada(medication));
         }
 
+        // GET: api/RxPrices/Find/Baclofen
+        [HttpGet("Find/{name}")]
+        public async Task<ActionResult<RxPriceDTO>> FindRxPrices(string name, string column, string value)
+        {
+            return Ok(await _rxPriceRepository.FindBy(name, column, value));
+        }
+
         // GET: api/RxPrices/Price/Mg
         [HttpGet("Price/Mg")]
         public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPricesPerMg()

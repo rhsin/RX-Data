@@ -80,6 +80,21 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
+        public async Task FindRxPrices()
+        {
+            var response = await _client.GetAsync("api/RxPrices/Find/Baclofen?column=dose&value=10");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var rxPrices = JsonConvert.DeserializeObject<RxPriceDTO>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("Find Baclofen By dose: 10", rxPrices.Method);
+            Assert.True(rxPrices.Count >= 6);
+            Assert.True(rxPrices.RxPrices.Any());
+            Assert.Contains("baclofen", stringResponse);
+            Assert.Contains("CanadaRx24h", stringResponse);
+        }
+
+        [Fact]
         public async Task GetRxPricesPerMg()
         {
             var response = await _client.GetAsync("api/RxPrices/Price/Mg");

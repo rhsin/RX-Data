@@ -39,6 +39,17 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
+        public async Task FindRxPricesError()
+        {
+            var response = await _client.GetAsync("api/RxPrices/Find/Ba?column=dddddddddd");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<Error>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.Equal("Invalid Column Argument!", error.Message);
+        }
+
+        [Fact]
         public async Task GetVendorError()
         {
             var response = await _client.GetAsync("api/Vendors/100000");
