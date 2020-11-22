@@ -13,11 +13,14 @@ namespace RxData.Controllers
     public class RxPricesController : ControllerBase
     {
         private readonly IRxPriceRepository _rxPriceRepository;
+        private readonly IPriceCalculator _priceCalculator;
         private readonly IWebScraper _webScraper;
 
-        public RxPricesController(IRxPriceRepository rxPriceRepository, IWebScraper webScraper)
+        public RxPricesController(IRxPriceRepository rxPriceRepository, IPriceCalculator priceCalculator,
+            IWebScraper webScraper)
         {
             _rxPriceRepository = rxPriceRepository;
+            _priceCalculator = priceCalculator;
             _webScraper = webScraper;
         }
 
@@ -33,6 +36,15 @@ namespace RxData.Controllers
         public async Task<ActionResult<IEnumerable<RxPrice>>> FetchRxPricesCanada(string medication)
         {
             return Ok(await _webScraper.GetRxPricesCanada(medication));
+        }
+
+        // GET: api/RxPrices/Price/Mg
+        [HttpGet("Price/Mg")]
+        public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPricesPerMg()
+        {
+            var rxPrices = await _rxPriceRepository.GetAll();
+
+            return Ok(_priceCalculator.PricePerMg(rxPrices));
         }
 
         // POST: api/RxPrices/Seeder/Baclofen

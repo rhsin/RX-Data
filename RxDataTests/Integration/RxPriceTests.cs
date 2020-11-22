@@ -28,7 +28,7 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(19, rxPrices.Count());
+            Assert.True(rxPrices.Count() > 15);
             Assert.All(rxPrices, rp => Assert.NotNull(rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity > 0));
             Assert.All(rxPrices, rp => Assert.True(rp.Price > 0));
@@ -57,7 +57,7 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(8, rxPrices.Count());
+            Assert.True(rxPrices.Count() > 5);
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
             Assert.All(rxPrices, rp => Assert.True(rp.Price > 12));
@@ -72,11 +72,26 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(11, rxPrices.Count());
+            Assert.True(rxPrices.Count() > 10);
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 30));
             Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 10));
             Assert.All(rxPrices, rp => Assert.True(rp.Price > 50));
+        }
+
+        [Fact]
+        public async Task GetRxPricesPerMg()
+        {
+            var response = await _client.GetAsync("api/RxPrices/Price/Mg");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(rxPrices.Count() > 15);
+            Assert.All(rxPrices, rp => Assert.True(rp.Price > 0));
+            Assert.Contains("baclofen", stringResponse);
+            Assert.Contains("0.065", stringResponse);
+            Assert.Contains("0.067", stringResponse);
         }
 
         [Fact]

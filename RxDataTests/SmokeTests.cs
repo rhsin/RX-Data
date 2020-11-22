@@ -20,6 +20,7 @@ namespace RxDataTests
         [InlineData("api/RxPrices/1")]
         [InlineData("api/RxPrices/Fetch/Baclofen")]
         [InlineData("api/RxPrices/Fetch/Canada/Baclofen")]
+        [InlineData("api/RxPrices/Price/Mg")]
         [InlineData("api/Vendors")]
         [InlineData("api/Vendors/1")]
         public async Task TestEndpoints(string url)

@@ -36,6 +36,7 @@ namespace RxData
                        .AllowAnyHeader();
             }));
 
+            services.AddScoped<IPriceCalculator, PriceCalculator>();
             services.AddScoped<IWebScraper, WebScraper>();
             services.AddScoped<IRxPriceRepository, RxPriceRepository>();
             services.AddScoped<IVendorRepository, VendorRepository>();
