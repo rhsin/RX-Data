@@ -24,6 +24,28 @@ namespace RxData.Controllers
             _webScraper = webScraper;
         }
 
+        // GET: api/RxPrices
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPrices()
+        {
+            return Ok(await _rxPriceRepository.GetAll());
+        }
+
+        // GET: api/RxPrices/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RxPrice>> GetRxPrice(int id)
+        {
+            var rxPrices = await _rxPriceRepository.GetAll();
+            var rxPrice = rxPrices.FirstOrDefault(rp => rp.Id == id);
+
+            if (rxPrice == null)
+            {
+                return NotFound();
+            }
+
+            return rxPrice;
+        }
+
         // GET: api/RxPrices/Fetch/Baclofen
         [HttpGet("Fetch/{medication}")]
         public async Task<ActionResult<IEnumerable<RxPrice>>> FetchRxPrices(string medication)
@@ -73,28 +95,6 @@ namespace RxData.Controllers
             await _rxPriceRepository.SeedRxPrices(medication);
 
             return Ok($"RxPrices Seeded Successfully: {medication}!");
-        }
-
-        // GET: api/RxPrices
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPrices()
-        {
-            return Ok(await _rxPriceRepository.GetAll());
-        }
-
-        // GET: api/RxPrices/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RxPrice>> GetRxPrice(int id)
-        {
-            var rxPrices = await _rxPriceRepository.GetAll();
-            var rxPrice = rxPrices.FirstOrDefault(rp => rp.Id == id);
-
-            if (rxPrice == null)
-            {
-                return NotFound();
-            }
-
-            return rxPrice;
         }
 
         // PUT: api/RxPrices/5

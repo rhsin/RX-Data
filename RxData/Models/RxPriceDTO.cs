@@ -7,6 +7,6 @@ namespace RxData.Models
         public string Method { get; set; }
         public int Count { get; set; }
 
-        public IEnumerable<object> RxPrices { get; set; }
+        public IEnumerable<dynamic> RxPrices { get; set; }
     }
 }

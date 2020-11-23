@@ -25,6 +25,7 @@ namespace RxDataTests
         [InlineData("api/RxPrices/Price/Mg?name=baclofen")]
         [InlineData("api/Vendors")]
         [InlineData("api/Vendors/1")]
+        [InlineData("api/Vendors/Find?medication=sone&location=wal")]
         public async Task TestEndpoints(string url)
         {
             var response = await _client.GetAsync(url);

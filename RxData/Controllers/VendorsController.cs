@@ -18,20 +18,6 @@ namespace RxData.Controllers
             _vendorRepository = vendorRepository;
         }
 
-        // POST: api/Vendors/Seeder
-        [HttpPost("Seeder")]
-        public async Task<ActionResult<string>> SeedVendors()
-        {
-            if (_vendorRepository.VendorsSeeded())
-            {
-                return BadRequest("Vendors Already Seeded!");
-            }
-
-            await _vendorRepository.SeedVendors();
-
-            return Ok("Vendors Seeded Successfully!");
-        }
-
         // GET: api/Vendors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()
@@ -52,6 +38,28 @@ namespace RxData.Controllers
             }
 
             return vendor;
+        }
+
+        // GET: api/Vendors/Find
+        [HttpGet("Find")]
+        public async Task<ActionResult<IEnumerable<Vendor>>> FindVendors(string medication,
+            string location)
+        {
+            return Ok(await _vendorRepository.FindBy(medication, location));
+        }
+
+        // POST: api/Vendors/Seeder
+        [HttpPost("Seeder")]
+        public async Task<ActionResult<string>> SeedVendors()
+        {
+            if (_vendorRepository.VendorsSeeded())
+            {
+                return BadRequest("Vendors Already Seeded!");
+            }
+
+            await _vendorRepository.SeedVendors();
+
+            return Ok("Vendors Seeded Successfully!");
         }
 
         // PUT: api/Vendors/5

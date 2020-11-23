@@ -10,10 +10,11 @@ namespace RxData.Repositories
     public interface IVendorRepository
     {
         public Task<IEnumerable<Vendor>> GetAll();
+        public Task<IEnumerable<Vendor>> FindBy(string medication, string location);
+        public Task SeedVendors();
         public Task Create(Vendor vendor);
         public Task Update(Vendor vendor);
         public Task Delete(int id);
-        public Task SeedVendors();
         public bool VendorsSeeded();
     }
 
@@ -33,6 +34,36 @@ namespace RxData.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Vendor>> FindBy(string medication, string location)
+        {
+            return await _context.Vendors
+                .Include(v => v.RxPrices)
+                .Select(v => new Vendor
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    Url = v.Url,
+                    RxPrices = v.RxPrices
+                        .Where(rp => rp.Name.Contains(medication))
+                        .Where(rp => rp.Location.Contains(location))
+                        .OrderBy(rp => rp.Name)
+                        .ToList()
+                })
+                .ToListAsync();
+        }
+
+        public async Task SeedVendors()
+        {
+            var vendors = new List<Vendor>
+            {
+                new Vendor { Name = "SingleCare", Url = "https://www.singlecare.com" },
+                new Vendor { Name = "CanadaRx24h", Url = "https://canadarx24h.com/" }
+            };
+
+            _context.Vendors.AddRange(vendors);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task Create(Vendor vendor)
         {
             _context.Vendors.Add(vendor);
@@ -50,18 +81,6 @@ namespace RxData.Repositories
             var vendor = await _context.Vendors.FindAsync(id);
 
             _context.Vendors.Remove(vendor);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task SeedVendors()
-        {
-            var vendors = new List<Vendor>
-            {
-                new Vendor { Name = "SingleCare", Url = "https://www.singlecare.com" },
-                new Vendor { Name = "CanadaRx24h", Url = "https://canadarx24h.com/" }
-            };
-
-            _context.Vendors.AddRange(vendors);
             await _context.SaveChangesAsync();
         }
 

@@ -18,10 +18,10 @@ namespace RxData.Repositories
         public Task<IEnumerable<RxPrice>> GetMedication(string name);
         public Task<RxPriceDTO> FindBy(string name, string column, string value);
         public Task<RxPriceDTO> FindMedication(string name, string location, float price);
+        public Task SeedRxPrices(string medication);
         public Task Create(RxPrice rxPrice);
         public Task Update(RxPrice rxPrice);
         public Task Delete(int id);
-        public Task SeedRxPrices(string medication);
         public bool RxPricesSeeded(string medication);
     }
 
@@ -87,15 +87,15 @@ namespace RxData.Repositories
         {
             var parameters = new { Name = $"%{name}%", Location = $"%{location}%", Price = price };
 
-            var sql = $@"SELECT rp.Id, rp.Name, rp.Quantity, rp.Dose, rp.Price, 
-                         rp.Location, v.Id AS VendorId, v.Name AS Vendor, v.Url
-                         FROM RxPrices AS rp
-                         INNER JOIN Vendors AS v
-                         ON rp.VendorId = v.Id
-                         WHERE LOWER(rp.Name) LIKE LOWER(@Name)
-                         AND LOWER(rp.Location) LIKE LOWER(@Location)
-                         AND rp.Price <= @Price
-                         ORDER BY rp.Price";
+            var sql = @"SELECT rp.Id, rp.Name, rp.Quantity, rp.Dose, rp.Price, 
+                        rp.Location, v.Id AS VendorId, v.Name AS Vendor, v.Url
+                        FROM RxPrices AS rp
+                        INNER JOIN Vendors AS v
+                        ON rp.VendorId = v.Id
+                        WHERE LOWER(rp.Name) LIKE LOWER(@Name)
+                        AND LOWER(rp.Location) LIKE LOWER(@Location)
+                        AND rp.Price <= @Price
+                        ORDER BY rp.Price";
 
             using (var connection = new SqlConnection(_config.GetConnectionString("Default")))
             {
@@ -110,6 +110,16 @@ namespace RxData.Repositories
 
                 return rxPriceDTO;
             }
+        }
+
+        public async Task SeedRxPrices(string medication)
+        {
+            var rxPrices = await _webScraper.GetRxPrices(medication);
+            var rxPricesCanada = await _webScraper.GetRxPricesCanada(medication);
+
+            _context.RxPrices.AddRange(rxPrices);
+            _context.RxPrices.AddRange(rxPricesCanada);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Create(RxPrice rxPrice)
@@ -129,16 +139,6 @@ namespace RxData.Repositories
             var rxPrice = await _context.RxPrices.FindAsync(id);
 
             _context.RxPrices.Remove(rxPrice);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task SeedRxPrices(string medication)
-        {
-            var rxPrices = await _webScraper.GetRxPrices(medication);
-            var rxPricesCanada = await _webScraper.GetRxPricesCanada(medication);
-
-            _context.RxPrices.AddRange(rxPrices);
-            _context.RxPrices.AddRange(rxPricesCanada);
             await _context.SaveChangesAsync();
         }
 

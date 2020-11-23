@@ -27,7 +27,7 @@ namespace RxDataTests.Integration
             var vendors = JsonConvert.DeserializeObject<List<Vendor>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(2, vendors.Count());
+            Assert.True(vendors.Count() >= 2);
             Assert.Contains("SingleCare", stringResponse);
             Assert.Contains("CanadaRx24h", stringResponse);
             Assert.Contains("baclofen", stringResponse);
@@ -45,6 +45,20 @@ namespace RxDataTests.Integration
             Assert.Equal("https://www.singlecare.com", vendor.Url);
             Assert.Contains("baclofen", stringResponse);
             Assert.Contains("geniusrx", stringResponse);
+        }
+
+        [Fact]
+        public async Task FindVendors()
+        {
+            var response = await _client.GetAsync("api/Vendors/Find?medication=sone&location=wal");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var vendors = JsonConvert.DeserializeObject<List<Vendor>>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(vendors.Count() >= 2);
+            Assert.Contains("prednisone", stringResponse);
+            Assert.Contains("walgreens", stringResponse);
+            Assert.Contains("walmart", stringResponse);
         }
 
         [Fact]
