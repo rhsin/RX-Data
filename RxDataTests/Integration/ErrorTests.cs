@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using RxData.Models;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -31,11 +32,23 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
-        public async Task GetRxPriceError()
+        public async Task NotFoundError()
         {
             var response = await _client.GetAsync("api/RxPrices/100000");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task BadRequestError()
+        {
+            var vendor = new Vendor { Id = 1000, Name = "Test", Url = "Test.com" };
+            var json = JsonConvert.SerializeObject(vendor);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.PutAsync("api/Vendors/100000", data);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -58,14 +71,6 @@ namespace RxDataTests.Integration
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             Assert.Equal("Invalid Column Argument: dddddddddd!", error.Message);
-        }
-
-        [Fact]
-        public async Task GetVendorError()
-        {
-            var response = await _client.GetAsync("api/Vendors/100000");
-
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

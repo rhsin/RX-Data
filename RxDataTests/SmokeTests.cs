@@ -24,6 +24,8 @@ namespace RxDataTests
         [InlineData("api/RxPrices/Find/Baclofen?column=dose&value=10")]
         [InlineData("api/RxPrices/Medication?name=zanaflex&location=walmart&price=13")]
         [InlineData("api/RxPrices/Price/Mg?name=baclofen")]
+        [InlineData("api/Users")]
+        [InlineData("api/Users/1")]
         [InlineData("api/Vendors")]
         [InlineData("api/Vendors/1")]
         [InlineData("api/Vendors/Find?medication=sone&location=wal")]

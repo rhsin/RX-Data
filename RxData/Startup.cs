@@ -39,6 +39,7 @@ namespace RxData
             services.AddScoped<IPriceCalculator, PriceCalculator>();
             services.AddScoped<IWebScraper, WebScraper>();
             services.AddScoped<IRxPriceRepository, RxPriceRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IVendorRepository, VendorRepository>();
         }
 
