@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace RxData.Models
 {
     public class RxPrice
@@ -12,5 +13,7 @@ namespace RxData.Models
 
         public int VendorId { get; set; }
         public Vendor Vendor { get; set; }
+
+        public ICollection<RxPriceUser> RxPriceUsers { get; set; }
     }
 }

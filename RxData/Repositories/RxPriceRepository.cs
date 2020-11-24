@@ -46,7 +46,7 @@ namespace RxData.Repositories
         public async Task<IEnumerable<RxPrice>> GetMedication(string name)
         {
             return await _context.RxPrices
-                .Where(rp => rp.Name == name)
+                .Where(rp => rp.Name == name.ToLower())
                 .ToListAsync();
         }
 
