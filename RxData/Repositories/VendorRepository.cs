@@ -57,7 +57,8 @@ namespace RxData.Repositories
             var vendors = new List<Vendor>
             {
                 new Vendor { Name = "SingleCare", Url = "https://www.singlecare.com" },
-                new Vendor { Name = "CanadaRx24h", Url = "https://canadarx24h.com/" }
+                new Vendor { Name = "CanadaRx24h", Url = "https://canadarx24h.com" },
+                new Vendor { Name = "OnlinePharmCanada", Url = "https://www.onlinepharmaciescanada.com" }
             };
 
             _context.Vendors.AddRange(vendors);

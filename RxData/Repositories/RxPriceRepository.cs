@@ -54,7 +54,7 @@ namespace RxData.Repositories
         {
             if (column.Length > 8)
             {
-                throw new ArgumentException("Invalid Column Argument!");
+                throw new ArgumentException($"Invalid Column Argument: {column}!");
             }
 
             var parameters = new { Name = $"%{name}%", Value = value };
@@ -116,9 +116,11 @@ namespace RxData.Repositories
         {
             var rxPrices = await _webScraper.GetRxPrices(medication);
             var rxPricesCanada = await _webScraper.GetRxPricesCanada(medication);
+            var rxPricesCanadaAlt = await _webScraper.GetRxPricesCanadaAlt(medication);
 
             _context.RxPrices.AddRange(rxPrices);
             _context.RxPrices.AddRange(rxPricesCanada);
+            _context.RxPrices.AddRange(rxPricesCanadaAlt);
             await _context.SaveChangesAsync();
         }
 

@@ -21,7 +21,7 @@ namespace RxDataTests.Unit
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
             Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 5));
-            Assert.All(rxPrices, rp => Assert.True(rp.Price > 12));
+            Assert.All(rxPrices, rp => Assert.True(rp.Price >= 12));
             Assert.All(rxPrices, rp => Assert.NotNull(rp.Location));
             Assert.All(rxPrices, rp => Assert.Equal(1, rp.VendorId));
         }
@@ -34,9 +34,22 @@ namespace RxDataTests.Unit
             Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
             Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 30));
             Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 10));
-            Assert.All(rxPrices, rp => Assert.True(rp.Price > 50));
+            Assert.All(rxPrices, rp => Assert.True(rp.Price >= 50));
             Assert.All(rxPrices, rp => Assert.Equal("online", rp.Location));
             Assert.All(rxPrices, rp => Assert.Equal(2, rp.VendorId));
+        }
+
+        [Fact]
+        public void GetRxPricesCanadaAlt()
+        {
+            var rxPrices = _webScraper.GetRxPricesCanadaAlt("Prednisone").Result;
+
+            Assert.All(rxPrices, rp => Assert.Equal("prednisone", rp.Name));
+            Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 50));
+            Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 5));
+            Assert.All(rxPrices, rp => Assert.True(rp.Price >= 25));
+            Assert.All(rxPrices, rp => Assert.Equal("online", rp.Location));
+            Assert.All(rxPrices, rp => Assert.Equal(1002, rp.VendorId));
         }
 
         [Theory]

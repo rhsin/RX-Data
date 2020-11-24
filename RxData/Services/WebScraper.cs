@@ -1,5 +1,6 @@
 ﻿using AngleSharp;
 using RxData.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -11,6 +12,7 @@ namespace RxData.Services
     {
         public Task<IEnumerable<RxPrice>> GetRxPrices(string medication);
         public Task<IEnumerable<RxPrice>> GetRxPricesCanada(string medication);
+        public Task<IEnumerable<RxPrice>> GetRxPricesCanadaAlt(string medication);
         public int GetInteger(string input);
         public float GetFloat(string input);
     }
@@ -29,19 +31,25 @@ namespace RxData.Services
             var source = $"https://www.singlecare.com/prescription/{medication}";
             var document = await _context.OpenAsync(source);
             var elements = document.QuerySelectorAll("div.pharmacy-item");
-            var text = document.QuerySelector("span.filter-amt--qty")?.TextContent.Split();
 
-            int quantity = this.GetInteger(text.FirstOrDefault());
+            if (!elements.Any())
+            {
+                throw new ArgumentException($"Medication Not Found: {medication}!");
+            }
 
-            int dose = this.GetInteger(text.LastOrDefault());
+            var textElements = document.QuerySelector("span.filter-amt--qty")?.TextContent.Split();
+
+            var quantity = this.GetInteger(textElements.FirstOrDefault());
+            var dose = this.GetInteger(textElements.LastOrDefault());
 
             var rxPrices = new List<RxPrice>();
 
             foreach (var e in elements)
             {
-                float price = this.GetFloat(e.QuerySelector("p.pharmacy-item__price")?.TextContent);
+                var price = this.GetFloat(e.QuerySelector("p.pharmacy-item__price")?.TextContent);
+                var location = e.QuerySelector("img")?.GetAttribute("data-name");
 
-                if (price > 0)
+                if (price > 0 && dose < 1000)
                 {
                     rxPrices.Add(new RxPrice
                     {
@@ -49,7 +57,7 @@ namespace RxData.Services
                         Quantity = quantity,
                         Dose = dose,
                         Price = price,
-                        Location = e.QuerySelector("img")?.GetAttribute("data-name"),
+                        Location = location,
                         VendorId = 1
                     });
                 }
@@ -64,19 +72,24 @@ namespace RxData.Services
             var document = await _context.OpenAsync(source);
             var elements = document.QuerySelectorAll("tr");
 
+            if (!elements.Any())
+            {
+                throw new ArgumentException($"Medication Not Found: {medication}!");
+            }
+
             var rxPrices = new List<RxPrice>();
 
             foreach (var e in elements)
             {
-                int quantity = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
+                var quantity = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
                     .LastOrDefault()?.TextContent);
 
-                int dose = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
+                var dose = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
                     .FirstOrDefault()?.TextContent);
 
-                float price = this.GetFloat(e.QuerySelector("div.table__price_row")?.TextContent);
+                var price = this.GetFloat(e.QuerySelector("div.table__price_row")?.TextContent);
 
-                if (price > 0)
+                if (price > 0 && dose < 1000)
                 {
                     rxPrices.Add(new RxPrice
                     {
@@ -86,6 +99,42 @@ namespace RxData.Services
                         Price = price,
                         Location = "online",
                         VendorId = 2
+                    });
+                }
+            }
+
+            return rxPrices;
+        }
+
+        public async Task<IEnumerable<RxPrice>> GetRxPricesCanadaAlt(string medication)
+        {
+            var source = $"https://www.onlinepharmaciescanada.com/pricedetail/{medication}";
+            var document = await _context.OpenAsync(source);
+            var elements = document.QuerySelectorAll("div#listproduct");
+
+            if (!elements.Any())
+            {
+                throw new ArgumentException($"Medication Not Found: {medication}!");
+            }
+
+            var rxPrices = new List<RxPrice>();
+
+            foreach (var e in elements)
+            {
+                var quantity = this.GetInteger(e.QuerySelector("div.productqty")?.TextContent);
+                var dose = this.GetInteger(e.QuerySelector("div.productdose")?.TextContent);
+                var price = this.GetFloat(e.QuerySelector("div.productprice")?.TextContent);
+
+                if (price > 0 && dose < 1000)
+                {
+                    rxPrices.Add(new RxPrice
+                    {
+                        Name = medication.ToLower(),
+                        Quantity = quantity,
+                        Dose = dose,
+                        Price = price,
+                        Location = "online",
+                        VendorId = 1002
                     });
                 }
             }

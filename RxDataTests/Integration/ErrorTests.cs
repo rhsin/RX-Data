@@ -39,6 +39,17 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
+        public async Task FetchRxPricesError()
+        {
+            var response = await _client.GetAsync("api/RxPrices/Fetch/aaaaaa");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<Error>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.Equal("Medication Not Found: aaaaaa!", error.Message);
+        }
+
+        [Fact]
         public async Task FindRxPricesError()
         {
             var response = await _client.GetAsync("api/RxPrices/Find/Ba?column=dddddddddd");
@@ -46,7 +57,7 @@ namespace RxDataTests.Integration
             var error = JsonConvert.DeserializeObject<Error>(stringResponse);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            Assert.Equal("Invalid Column Argument!", error.Message);
+            Assert.Equal("Invalid Column Argument: dddddddddd!", error.Message);
         }
 
         [Fact]

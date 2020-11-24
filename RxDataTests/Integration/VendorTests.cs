@@ -27,7 +27,7 @@ namespace RxDataTests.Integration
             var vendors = JsonConvert.DeserializeObject<List<Vendor>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(vendors.Count() >= 2);
+            Assert.True(vendors.Count() >= 3);
             Assert.Contains("SingleCare", stringResponse);
             Assert.Contains("CanadaRx24h", stringResponse);
             Assert.Contains("baclofen", stringResponse);
@@ -55,20 +55,20 @@ namespace RxDataTests.Integration
             var vendors = JsonConvert.DeserializeObject<List<Vendor>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(vendors.Count() >= 2);
+            Assert.True(vendors.Count() >= 3);
             Assert.Contains("prednisone", stringResponse);
             Assert.Contains("walgreens", stringResponse);
             Assert.Contains("walmart", stringResponse);
         }
 
-        [Fact]
-        public async Task SeedVendors()
-        {
-            var response = await _client.PostAsync($"api/Vendors/Seeder", null);
-            var stringResponse = await response.Content.ReadAsStringAsync();
+        //[Fact]
+        //public async Task SeedVendors()
+        //{
+        //    var response = await _client.PostAsync($"api/Vendors/Seeder", null);
+        //    var stringResponse = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("Vendors Already Seeded!", stringResponse);
-        }
+        //    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        //    Assert.Equal("Vendors Already Seeded!", stringResponse);
+        //}
     }
 }
