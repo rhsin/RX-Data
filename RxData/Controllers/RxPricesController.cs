@@ -69,7 +69,14 @@ namespace RxData.Controllers
 
         // GET: api/RxPrices/Find/Baclofen
         [HttpGet("Find/{name}")]
-        public async Task<ActionResult<RxPriceDTO>> FindRxPrices(string name, string column, string value)
+        public async Task<ActionResult<RxPriceDTO>> FindRxPrices(string name)
+        {
+            return Ok(await _rxPriceRepository.FindAll(name));
+        }
+
+        // GET: api/RxPrices/Values/Baclofen
+        [HttpGet("Values/{name}")]
+        public async Task<ActionResult<RxPriceDTO>> FindValues(string name, string column, string value)
         {
             return Ok(await _rxPriceRepository.FindBy(name, column, value));
         }

@@ -16,6 +16,7 @@ namespace RxData.Repositories
     {
         public Task<IEnumerable<RxPrice>> GetAll();
         public Task<IEnumerable<RxPrice>> GetMedication(string name);
+        public Task<RxPriceDTO> FindAll(string name);
         public Task<RxPriceDTO> FindBy(string name, string column, string value);
         public Task<RxPriceDTO> FindMedication(string name, string location, float price);
         public Task SeedRxPrices(string medication);
@@ -48,6 +49,38 @@ namespace RxData.Repositories
             return await _context.RxPrices
                 .Where(rp => rp.Name == name.ToLower())
                 .ToListAsync();
+        }
+
+        public async Task<RxPriceDTO> FindAll(string name)
+        {
+            var parameters = new { Name = $"%{name}%" };
+
+            var sql = $@"SELECT rp.Id, rp.Name, rp.Quantity, rp.Dose, rp.Price, 
+                         rp.Location, v.Id AS VendorId, v.Name AS Vendor, 
+                         v.Url, u.Id AS UserId, u.Name AS Username
+                         FROM RxPrices AS rp
+                         INNER JOIN Vendors AS v
+                         ON rp.VendorId = v.Id
+                         LEFT JOIN RxPriceUsers AS ru
+                         ON rp.Id = ru.RxPriceId
+                         LEFT JOIN Users AS u
+                         ON ru.UserId = u.Id
+                         WHERE LOWER(rp.Name) LIKE LOWER(@Name)
+                         ORDER BY rp.Price";
+
+            using (var connection = new SqlConnection(_config.GetConnectionString("Default")))
+            {
+                var rxPrices = await connection.QueryAsync(sql, parameters);
+
+                var rxPriceDTO = new RxPriceDTO
+                {
+                    Method = $"Find All: {name}",
+                    Count = rxPrices.Count(),
+                    RxPrices = rxPrices
+                };
+
+                return rxPriceDTO;
+            }
         }
 
         public async Task<RxPriceDTO> FindBy(string name, string column, string value)

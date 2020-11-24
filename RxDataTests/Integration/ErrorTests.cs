@@ -63,9 +63,9 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
-        public async Task FindRxPricesError()
+        public async Task FindValuesError()
         {
-            var response = await _client.GetAsync("api/RxPrices/Find/Ba?column=dddddddddd");
+            var response = await _client.GetAsync("api/RxPrices/Values/Ba?column=dddddddddd");
             var stringResponse = await response.Content.ReadAsStringAsync();
             var error = JsonConvert.DeserializeObject<Error>(stringResponse);
 

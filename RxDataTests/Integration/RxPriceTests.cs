@@ -97,7 +97,22 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task FindRxPrices()
         {
-            var response = await _client.GetAsync("api/RxPrices/Find/Baclofen?column=dose&value=10");
+            var response = await _client.GetAsync("api/RxPrices/Find/Baclofen");
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var rxPrices = JsonConvert.DeserializeObject<RxPriceDTO>(stringResponse);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("Find All: Baclofen", rxPrices.Method);
+            Assert.True(rxPrices.Count >= 23);
+            Assert.True(rxPrices.RxPrices.Any());
+            Assert.Contains("baclofen", stringResponse);
+            Assert.Contains("Ryan", stringResponse);
+        }
+
+        [Fact]
+        public async Task FindValues()
+        {
+            var response = await _client.GetAsync("api/RxPrices/Values/Baclofen?column=dose&value=10");
             var stringResponse = await response.Content.ReadAsStringAsync();
             var rxPrices = JsonConvert.DeserializeObject<RxPriceDTO>(stringResponse);
 
