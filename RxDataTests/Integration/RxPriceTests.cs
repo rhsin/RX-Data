@@ -106,7 +106,7 @@ namespace RxDataTests.Integration
             Assert.True(rxPrices.Count >= 23);
             Assert.True(rxPrices.RxPrices.Any());
             Assert.Contains("baclofen", stringResponse);
-            Assert.Contains("Ryan", stringResponse);
+            Assert.Contains("Admin", stringResponse);
         }
 
         [Fact]

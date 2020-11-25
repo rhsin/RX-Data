@@ -40,6 +40,24 @@ namespace RxData.Controllers
             return user;
         }
 
+        // POST: api/Users/RxPrices/2/1
+        [HttpPost("RxPrices/{rxPriceId}/{userId}")]
+        public async Task<ActionResult<string>> AddRxPrice(int rxPriceId, int userId)
+        {
+            await _userRepository.AddRxPrice(rxPriceId, userId);
+
+            return Ok($"RxPrice {rxPriceId} Added To User {userId}!");
+        }
+
+        // DELETE: api/Users/RxPrices/2/1
+        [HttpDelete("RxPrices/{rxPriceId}/{userId}")]
+        public async Task<ActionResult<string>> RemoveRxPrice(int rxPriceId, int userId)
+        {
+            await _userRepository.RemoveRxPrice(rxPriceId, userId);
+
+            return Ok($"RxPrice {rxPriceId} Removed From User {userId}!");
+        }
+
         // PUT: api/Users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)

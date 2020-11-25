@@ -10,6 +10,8 @@ namespace RxData.Repositories
     public interface IUserRepository
     {
         public Task<IEnumerable<User>> GetAll();
+        public Task AddRxPrice(int rxPriceId, int userId);
+        public Task RemoveRxPrice(int rxPriceId, int userId);
         public Task Create(User user);
         public Task Update(User user);
         public Task Delete(int id);
@@ -32,10 +34,43 @@ namespace RxData.Repositories
                 .ToListAsync();
         }
 
+        public async Task AddRxPrice(int rxPriceId, int userId)
+        {
+            _context.RxPriceUsers.Add(new RxPriceUser 
+            {
+                RxPriceId = rxPriceId,
+                UserId = userId 
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveRxPrice(int rxPriceId, int userId)
+        {
+            _context.RxPriceUsers.Remove(new RxPriceUser
+            {
+                RxPriceId = rxPriceId,
+                UserId = userId
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task Create(User user)
         {
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _context.Database.OpenConnectionAsync();
+
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Users ON");
+                await _context.SaveChangesAsync();
+                await _context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Users OFF");
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
+            }
         }
 
         public async Task Update(User user)
