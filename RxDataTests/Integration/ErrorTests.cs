@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RxData.Models;
 using System.Net;
 using System.Net.Http;
@@ -49,6 +50,23 @@ namespace RxDataTests.Integration
             var response = await _client.PutAsync("api/Vendors/100000", data);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ValidatonError()
+        {
+            var vendor = new Vendor { Name = "T", Url = "Test.com" };
+            var json = JsonConvert.SerializeObject(vendor);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync("api/Vendors", data);
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var error = JObject.Parse(stringResponse);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("One or more validation errors occurred.", error["title"]);
+            Assert.NotEmpty(error["errors"]["Name"]);
+            Assert.Contains("minimum length of 3", stringResponse);
         }
 
         [Fact]
