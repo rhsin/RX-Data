@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace RxData.Models
+namespace RxData.DTO
 {
     public class Error
     {

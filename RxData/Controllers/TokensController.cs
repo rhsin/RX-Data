@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RxData.Data;
+using RxData.DTO;
 using RxData.Models;
 using System;
 using System.Collections.Generic;
@@ -28,24 +29,20 @@ namespace RxData.Controllers
         // POST: api/Tokens
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult CreateToken([FromBody] Login login)
+        public ActionResult<AuthToken> CreateToken([FromBody] Login login)
         {
-            IActionResult response = Unauthorized();
+            var user = _context.Users
+                .Where(u => u.Email == login.Email)
+                .SingleOrDefault();
 
-            var user = Authenticate(login);
-
-            if (user != null)
+            if (user != null && login.Password == "test")
             {
                 var tokenString = BuildToken(user);
 
-                response = Ok(new
-                {
-                    User = user,
-                    Token = tokenString
-                });
+                return Ok(new AuthToken { User = user, Token = tokenString });
             }
 
-            return response;
+            return Unauthorized();
         }
 
         private string BuildToken(User user)
@@ -70,20 +67,6 @@ namespace RxData.Controllers
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private User Authenticate(Login login)
-        {
-            var user = _context.Users
-                .Where(u => u.Email == login.Email)
-                .SingleOrDefault();
-
-            if (login.Password == "test")
-            {
-                return user;
-            }
-
-            return null;
         }
     }
 }

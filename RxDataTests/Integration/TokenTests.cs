@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RxData.Models;
+using RxData.DTO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -28,13 +27,13 @@ namespace RxDataTests.Integration
 
             var response = await _client.PostAsync("api/Tokens", data);
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var token = JObject.Parse(stringResponse);
+            var token = JsonConvert.DeserializeObject<AuthToken>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1, token["user"]["id"]);
-            Assert.Equal("admin@test.com", token["user"]["email"]);
-            Assert.Equal("Admin", token["user"]["role"]);
-            Assert.True(token["token"].ToString().Length >= 500);
+            Assert.Equal(1, token.User.Id);
+            Assert.Equal("admin@test.com", token.User.Email);
+            Assert.Equal("Admin", token.User.Role);
+            Assert.True(token.Token.Length >= 500);
         }
 
         [Fact]

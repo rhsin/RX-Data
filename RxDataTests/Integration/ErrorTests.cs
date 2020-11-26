@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RxData.DTO;
 using RxData.Models;
 using System.Net;
 using System.Net.Http;
@@ -22,14 +23,14 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task ErrorResponse()
         {
-            var response = await _client.DeleteAsync("api/Vendors/100000");
+            var response = await _client.DeleteAsync("api/Users/100000");
             var stringResponse = await response.Content.ReadAsStringAsync();
             var error = JsonConvert.DeserializeObject<Error>(stringResponse);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             Assert.Equal(500, error.StatusCode);
             Assert.Equal("Value cannot be null. (Parameter 'entity')", error.Message);
-            Assert.Contains("VendorsController.DeleteVendor", error.StackTrace);
+            Assert.Contains("UsersController.DeleteUser", error.StackTrace);
         }
 
         [Fact]
@@ -43,11 +44,11 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task BadRequestError()
         {
-            var vendor = new Vendor { Id = 1000, Name = "Test", Url = "Test.com" };
-            var json = JsonConvert.SerializeObject(vendor);
+            var user = new User { Id = 500, Name = "T", Email = "test.com" };
+            var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _client.PutAsync("api/Vendors/100000", data);
+            var response = await _client.PutAsync("api/Users/1000", data);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -55,11 +56,11 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task UnauthorizedError()
         {
-            var rxPrice = new RxPrice { Id = 1000, Name = "Test", Price = 10 };
+            var rxPrice = new RxPrice { Id = 500, Name = "Test", Price = 10 };
             var json = JsonConvert.SerializeObject(rxPrice);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _client.PutAsync("api/RxPrices/1000", data);
+            var response = await _client.PutAsync("api/RxPrices/500", data);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
@@ -67,11 +68,11 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task ValidatonError()
         {
-            var vendor = new Vendor { Name = "T", Url = "Test.com" };
-            var json = JsonConvert.SerializeObject(vendor);
+            var user = new User { Name = "T", Email = "test.com" };
+            var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _client.PostAsync("api/Vendors", data);
+            var response = await _client.PostAsync("api/Users", data);
             var stringResponse = await response.Content.ReadAsStringAsync();
             var error = JObject.Parse(stringResponse);
 

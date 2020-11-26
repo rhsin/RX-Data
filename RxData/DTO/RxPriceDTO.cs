@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RxData.Models
+namespace RxData.DTO
 {
     public class RxPriceDTO
     {

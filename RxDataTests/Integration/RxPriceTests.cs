@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using RxData.DTO;
 using RxData.Models;
 using System.Collections.Generic;
 using System;

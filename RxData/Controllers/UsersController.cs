@@ -84,6 +84,7 @@ namespace RxData.Controllers
         }
 
         // DELETE: api/Users/5
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {

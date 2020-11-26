@@ -50,7 +50,7 @@ namespace RxData.Controllers
         }
 
         // POST: api/Vendors/Seeder
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost("Seeder")]
         public async Task<ActionResult<string>> SeedVendors()
         {
@@ -65,7 +65,7 @@ namespace RxData.Controllers
         }
 
         // PUT: api/Vendors/5
-        //[Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVendor(int id, Vendor vendor)
         {
@@ -80,7 +80,7 @@ namespace RxData.Controllers
         }
 
         // POST: api/Vendors
-        //[Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Vendor>> PostVendor(Vendor vendor)
         {
@@ -90,7 +90,7 @@ namespace RxData.Controllers
         }
 
         // DELETE: api/Vendors/5
-        //[Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Vendor>> DeleteVendor(int id)
         {

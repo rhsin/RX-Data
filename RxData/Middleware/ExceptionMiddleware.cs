@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using RxData.Models;
+using RxData.DTO;
 using System;
 using System.Threading.Tasks;
 

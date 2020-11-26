@@ -1,5 +1,5 @@
 ﻿
-namespace RxData.Models
+namespace RxData.DTO
 {
     public class Login
     {

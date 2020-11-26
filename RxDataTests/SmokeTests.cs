@@ -30,11 +30,41 @@ namespace RxDataTests
         [InlineData("api/Vendors")]
         [InlineData("api/Vendors/1")]
         [InlineData("api/Vendors/Find?medication=sone&location=wal")]
-        public async Task TestEndpoints(string url)
+        public async Task TestGetEndpoints(string url)
         {
             var response = await _client.GetAsync(url);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("api/RxPrices")]
+        [InlineData("api/Vendors")]
+        public async Task TestAuthPostEndpoints(string url)
+        {
+            var response = await _client.PostAsync(url, null);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("api/RxPrices/600")]
+        [InlineData("api/Vendors/600")]
+        public async Task TestAuthPutEndpoints(string url)
+        {
+            var response = await _client.PutAsync(url, null);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("api/RxPrices/600")]
+        [InlineData("api/Vendors/600")]
+        public async Task TestAuthDeleteEndpoints(string url)
+        {
+            var response = await _client.DeleteAsync(url);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 }

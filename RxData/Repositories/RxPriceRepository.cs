@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RxData.Data;
+using RxData.DTO;
 using RxData.Models;
 using RxData.Services;
 using System;
