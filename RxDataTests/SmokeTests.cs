@@ -38,21 +38,21 @@ namespace RxDataTests
         }
 
         [Theory]
-        [InlineData("api/RxPrices")]
-        [InlineData("api/Vendors")]
-        public async Task TestAuthPostEndpoints(string url)
-        {
-            var response = await _client.PostAsync(url, null);
-
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Theory]
         [InlineData("api/RxPrices/600")]
         [InlineData("api/Vendors/600")]
         public async Task TestAuthPutEndpoints(string url)
         {
             var response = await _client.PutAsync(url, null);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("api/RxPrices")]
+        [InlineData("api/Vendors")]
+        public async Task TestAuthPostEndpoints(string url)
+        {
+            var response = await _client.PostAsync(url, null);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }

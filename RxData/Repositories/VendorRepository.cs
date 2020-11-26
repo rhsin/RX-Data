@@ -68,7 +68,18 @@ namespace RxData.Repositories
         public async Task Create(Vendor vendor)
         {
             _context.Vendors.Add(vendor);
-            await _context.SaveChangesAsync();
+            await _context.Database.OpenConnectionAsync();
+
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Vendors ON");
+                await _context.SaveChangesAsync();
+                await _context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Vendors OFF");
+            }
+            finally
+            {
+                await _context.Database.CloseConnectionAsync();
+            }
         }
 
         public async Task Update(Vendor vendor)

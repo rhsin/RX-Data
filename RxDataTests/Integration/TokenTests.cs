@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using RxData.DTO;
+using RxData.Models;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -37,7 +38,7 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
-        public async Task Unauthorized()
+        public async Task UnauthorizedLogin()
         {
             var login = new Login { Email = "test@test.com", Password = "test" };
             var json = JsonConvert.SerializeObject(login);
@@ -47,5 +48,53 @@ namespace RxDataTests.Integration
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
+        [Fact]
+        public async Task AdminAuthPost()
+        {
+            var vendor = new Vendor
+            {
+                Id = 1400,
+                Name = "Test",
+                Url = "https://www.test.com"
+            };
+            var json = JsonConvert.SerializeObject(vendor);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Token);
+
+            var response = await _client.PostAsync("api/Vendors", data);
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task AdminAuthDelete()
+        {
+            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Token);
+
+            var response = await _client.DeleteAsync("api/Vendors/1400");
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        //[Fact]
+        //public async Task AdminAuthPut()
+        //{
+        //    var vendor = new Vendor
+        //    {
+        //        Id = 1400,
+        //        Name = "Test Vendor",
+        //        Url = "https://www.test.com"
+        //    };
+        //    var json = JsonConvert.SerializeObject(vendor);
+        //    var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //    _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Token);
+
+        //    var response = await _client.PutAsync("api/Vendors/1400", data);
+
+        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        //}
     }
 }

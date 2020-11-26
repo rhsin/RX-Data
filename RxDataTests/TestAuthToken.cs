@@ -1,0 +1,8 @@
+﻿
+namespace RxDataTests
+{
+    static class TestAuthToken
+    {
+        public const string Token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNTRlMTViOC02MTEwLTRmOTItODY1Yy1jODcwYWZjYjlhY2UiLCJzdWIiOiJhZG1pbkB0ZXN0LmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIxIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6IkFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE2MDg5NjMyNzEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDQzNDcvIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwLyJ9.WGn6FRXdbyy0cLx2ZRO-41cC-h5Gl4qH18AtZKAmcOA"; 
+    }
+}
