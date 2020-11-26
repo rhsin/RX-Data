@@ -50,7 +50,7 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
-        public async Task AdminAuthPost()
+        public async Task AdminAuthorizedPost()
         {
             var vendor = new Vendor
             {
@@ -61,7 +61,7 @@ namespace RxDataTests.Integration
             var json = JsonConvert.SerializeObject(vendor);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Token);
+            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Admin);
 
             var response = await _client.PostAsync("api/Vendors", data);
 
@@ -69,32 +69,33 @@ namespace RxDataTests.Integration
         }
 
         [Fact]
-        public async Task AdminAuthDelete()
+        public async Task AdminAuthorizedDelete()
         {
-            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Token);
+            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Admin);
 
             var response = await _client.DeleteAsync("api/Vendors/1400");
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        //[Fact]
-        //public async Task AdminAuthPut()
-        //{
-        //    var vendor = new Vendor
-        //    {
-        //        Id = 1400,
-        //        Name = "Test Vendor",
-        //        Url = "https://www.test.com"
-        //    };
-        //    var json = JsonConvert.SerializeObject(vendor);
-        //    var data = new StringContent(json, Encoding.UTF8, "application/json");
+        [Fact]
+        public async Task GuestForbiddenPut()
+        {
+            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Guest);
 
-        //    _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Token);
+            var response = await _client.PutAsync("api/Vendors/1500", null);
 
-        //    var response = await _client.PutAsync("api/Vendors/1400", data);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
 
-        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        //}
+        [Fact]
+        public async Task GuestForbiddenDelete()
+        {
+            _client.DefaultRequestHeaders.Add("Authorization", TestAuthToken.Guest);
+
+            var response = await _client.DeleteAsync("api/RxPrices/1500");
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
     }
 }
