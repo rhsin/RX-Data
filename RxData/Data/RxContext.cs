@@ -36,7 +36,13 @@ namespace RxData.Data
                 .HasForeignKey(ru => ru.UserId);
 
             modelBuilder.Entity<User>()
-                .HasData(new User { Id = 1, Name = "Ryan" });
+                .HasData(new User
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Email = "admin@test.com",
+                    Role = "Admin" 
+                });
 
             modelBuilder.Entity<RxPriceUser>()
                 .HasData(new RxPriceUser { RxPriceId = 1, UserId = 1 });

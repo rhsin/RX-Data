@@ -44,8 +44,9 @@ namespace RxDataTests.Integration
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, user.Id);
             Assert.Equal("Admin", user.Name);
+            Assert.Equal("admin@test.com", user.Email);
+            Assert.Equal("Admin", user.Role);
             Assert.True(user.RxPriceUsers.Count() >= 1);
-            Assert.Contains("location", stringResponse);
         }
 
         [Fact]
@@ -71,7 +72,13 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task PutUser()
         {
-            var user = new User { Id = 1, Name = "Admin" };
+            var user = new User
+            {
+                Id = 1,
+                Name = "Admin",
+                Email = "admin@test.com",
+                Role = "Admin"
+            };
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -83,7 +90,13 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task PostUser()
         {
-            var user = new User { Id = 500, Name = "Guest" };
+            var user = new User
+            {
+                Id = 500,
+                Name = "Guest",
+                Email = "guest@test.com",
+                Role = "Guest"
+            };
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
