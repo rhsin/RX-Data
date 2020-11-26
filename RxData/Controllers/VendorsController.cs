@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RxData.Models;
 using RxData.Repositories;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace RxData.Controllers
         }
 
         // POST: api/Vendors/Seeder
+        [Authorize]
         [HttpPost("Seeder")]
         public async Task<ActionResult<string>> SeedVendors()
         {
@@ -63,6 +65,7 @@ namespace RxData.Controllers
         }
 
         // PUT: api/Vendors/5
+        //[Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVendor(int id, Vendor vendor)
         {
@@ -77,6 +80,7 @@ namespace RxData.Controllers
         }
 
         // POST: api/Vendors
+        //[Authorize]
         [HttpPost]
         public async Task<ActionResult<Vendor>> PostVendor(Vendor vendor)
         {
@@ -86,6 +90,7 @@ namespace RxData.Controllers
         }
 
         // DELETE: api/Vendors/5
+        //[Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Vendor>> DeleteVendor(int id)
         {

@@ -22,14 +22,14 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task ErrorResponse()
         {
-            var response = await _client.DeleteAsync("api/RxPrices/100000");
+            var response = await _client.DeleteAsync("api/Vendors/100000");
             var stringResponse = await response.Content.ReadAsStringAsync();
             var error = JsonConvert.DeserializeObject<Error>(stringResponse);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             Assert.Equal(500, error.StatusCode);
             Assert.Equal("Value cannot be null. (Parameter 'entity')", error.Message);
-            Assert.Contains("RxPricesController.DeleteRxPrice", error.StackTrace);
+            Assert.Contains("VendorsController.DeleteVendor", error.StackTrace);
         }
 
         [Fact]
@@ -50,6 +50,18 @@ namespace RxDataTests.Integration
             var response = await _client.PutAsync("api/Vendors/100000", data);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UnauthorizedError()
+        {
+            var rxPrice = new RxPrice { Id = 1000, Name = "Test", Price = 10 };
+            var json = JsonConvert.SerializeObject(rxPrice);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.PutAsync("api/RxPrices/1000", data);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [Fact]

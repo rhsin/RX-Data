@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RxData.Models;
 using RxData.Repositories;
 using RxData.Services;
@@ -98,6 +99,7 @@ namespace RxData.Controllers
         }
 
         // POST: api/RxPrices/Seeder/Baclofen
+        [Authorize]
         [HttpPost("Seeder/{medication}")]
         public async Task<ActionResult<string>> SeedRxPrices(string medication)
         {
@@ -112,6 +114,7 @@ namespace RxData.Controllers
         }
 
         // PUT: api/RxPrices/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRxPrice(int id, RxPrice rxPrice)
         {
@@ -126,6 +129,7 @@ namespace RxData.Controllers
         }
 
         // POST: api/RxPrices
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<RxPrice>> PostRxPrice(RxPrice rxPrice)
         {
@@ -135,6 +139,7 @@ namespace RxData.Controllers
         }
 
         // DELETE: api/RxPrices/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<RxPrice>> DeleteRxPrice(int id)
         {
