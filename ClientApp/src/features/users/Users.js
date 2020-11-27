@@ -23,6 +23,7 @@ export function Users() {
       <div>Users</div>
       <div>Status: {status}</div>
       <div>Count: {users.length}</div>
+      {status === 'loading' && <div>Loading...</div>}
       {users.map(user => 
         <div key={user.id}>
           <div>{user.id}</div>  

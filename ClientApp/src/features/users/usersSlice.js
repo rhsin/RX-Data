@@ -15,8 +15,8 @@ export const usersSlice = createSlice({
       state.status = 'loading';
     },
     [fetchUsers.fulfilled]: (state, action) => {
-      state.entities = action.payload;
       state.status = 'succeeded';
+      state.entities = action.payload;
     },
     [fetchUsers.rejected]: (state, action) => {
       state.status = 'failed';

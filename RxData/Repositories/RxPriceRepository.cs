@@ -77,7 +77,7 @@ namespace RxData.Repositories
                 {
                     Method = $"Find All: {name}",
                     Count = rxPrices.Count(),
-                    RxPrices = rxPrices
+                    RxPrices = rxPrices.Take(10)
                 };
 
                 return rxPriceDTO;
