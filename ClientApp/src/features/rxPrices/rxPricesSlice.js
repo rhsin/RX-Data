@@ -3,7 +3,7 @@ import axios from 'axios';
 import { API_URL } from '../../constants';
 
 export const fetchRxPrices = createAsyncThunk('rxPrices/fetchRxPrices', async () => {
-  const response = await axios.get(API_URL + 'RxPrices');
+  const response = await axios.get(API_URL + 'rxPrices');
   return response.data;
 });
 
