@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { addRxPrice } from '../users/usersSlice';
 import {
   fetchRxPrices,
   findRxPrices,
@@ -49,6 +50,11 @@ export function RxPrices() {
           <div>{rxPrice.id}</div>  
           <div>{rxPrice.name}</div>  
           <div>{rxPrice.price}</div>  
+          <button 
+            onClick={() => dispatch(addRxPrice(rxPrice.id, '1'))}
+          >
+            +
+          </button> 
         </div>
       )}
     </div>

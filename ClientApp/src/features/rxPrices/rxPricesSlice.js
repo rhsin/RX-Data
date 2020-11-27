@@ -9,14 +9,18 @@ export const fetchRxPrices = createAsyncThunk('rxPrices/fetchRxPrices', async (u
 });
 
 export const findRxPrices = createAsyncThunk('rxPrices/findRxPrices', async (name) => {
-  const response = await axios.get(`${API_URL}rxPrices/find/${name}`);
+  const response = await axios.get(`${API_URL}/rxPrices/find/${name}`);
   const rxPrices = await response.data.rxPrices.slice(0, 5);
   return rxPrices.map(rxPrice => lowercaseKeys(rxPrice));
 });
 
 export const rxPricesSlice = createSlice({
   name: 'rxPrices',
-  initialState: { entities: [], status: 'idle' },
+  initialState: {
+    entities: [],
+    status: 'idle',
+    error: null 
+  },
   extraReducers: {
     [fetchRxPrices.pending]: (state, action) => {
       state.status = 'loading';
@@ -24,6 +28,10 @@ export const rxPricesSlice = createSlice({
     [fetchRxPrices.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.entities = action.payload;
+    },
+    [fetchRxPrices.rejected]: (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
     },
     [findRxPrices.pending]: (state, action) => {
       state.status = 'loading';
@@ -38,8 +46,8 @@ export const rxPricesSlice = createSlice({
 export const selectRxPrices = state => state.rxPrices.entities;
 export const selectStatus = state => state.rxPrices.status;
 
-export const rxPricesUrl = `${API_URL}rxPrices`;
-export const webRxPricesUrl = (name) => `${API_URL}rxPrices/Fetch/${name}`;
-export const findRxPricesUrl = (name) => `${API_URL}rxPrices/Price/Mg/${name}`;
+export const rxPricesUrl = `${API_URL}/rxPrices`;
+export const webRxPricesUrl = (name) => `${API_URL}/rxPrices/Fetch/${name}`;
+export const findRxPricesUrl = (name) => `${API_URL}/rxPrices/Price/Mg/${name}`;
 
 export default rxPricesSlice.reducer;
