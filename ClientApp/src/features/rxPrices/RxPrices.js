@@ -5,7 +5,9 @@ import {
   findRxPrices,
   selectRxPrices,
   selectStatus,
-  selectError
+  rxPricesUrl,
+  webRxPricesUrl,
+  findRxPricesUrl
 } from './rxPricesSlice';
 
 export function RxPrices() {
@@ -16,7 +18,7 @@ export function RxPrices() {
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchRxPrices())
+      dispatch(fetchRxPrices(rxPricesUrl))
     }
   }, [status, dispatch]);
 
@@ -26,8 +28,20 @@ export function RxPrices() {
       <div>Status: {status}</div>
       <div>Count: {rxPrices.length}</div>
       <input onChange={e => setName(e.target.value)} />
-      <button onClick={() => dispatch(findRxPrices(name))}>
+      <button 
+        onClick={() => dispatch(findRxPrices(name))}
+      >
         Find
+      </button>
+      <button 
+        onClick={() => dispatch(fetchRxPrices(findRxPricesUrl(name)))}
+      >
+        Price/Mg
+      </button>
+      <button 
+        onClick={() => dispatch(fetchRxPrices(webRxPricesUrl(name)))}
+      >
+        Update
       </button>
       {status === 'loading' && <div>Loading...</div>}
       {rxPrices.map(rxPrice => 

@@ -3,20 +3,20 @@ import axios from 'axios';
 import lowercaseKeys from 'lowercase-keys';
 import { API_URL } from '../../constants';
 
-export const fetchRxPrices = createAsyncThunk('rxPrices/fetchRxPrices', async () => {
-  const response = await axios.get(API_URL + 'rxPrices');
-  return response.data;
+export const fetchRxPrices = createAsyncThunk('rxPrices/fetchRxPrices', async (url) => {
+  const response = await axios.get(url);
+  return response.data.slice(0, 5);
 });
 
 export const findRxPrices = createAsyncThunk('rxPrices/findRxPrices', async (name) => {
   const response = await axios.get(`${API_URL}rxPrices/find/${name}`);
-  const rxPrices = await response.data.rxPrices;
+  const rxPrices = await response.data.rxPrices.slice(0, 5);
   return rxPrices.map(rxPrice => lowercaseKeys(rxPrice));
 });
 
 export const rxPricesSlice = createSlice({
   name: 'rxPrices',
-  initialState: { entities: [], status: 'idle', error: null },
+  initialState: { entities: [], status: 'idle' },
   extraReducers: {
     [fetchRxPrices.pending]: (state, action) => {
       state.status = 'loading';
@@ -25,11 +25,11 @@ export const rxPricesSlice = createSlice({
       state.status = 'succeeded';
       state.entities = action.payload;
     },
-    [fetchRxPrices.rejected]: (state, action) => {
-      state.status = 'failed';
-      state.error = action.error.message;
+    [findRxPrices.pending]: (state, action) => {
+      state.status = 'loading';
     },
     [findRxPrices.fulfilled]: (state, action) => {
+      state.status = 'succeeded';
       state.entities = action.payload;
     }
   }
@@ -37,6 +37,9 @@ export const rxPricesSlice = createSlice({
 
 export const selectRxPrices = state => state.rxPrices.entities;
 export const selectStatus = state => state.rxPrices.status;
-export const selectError = state => state.rxPrices.error;
+
+export const rxPricesUrl = `${API_URL}rxPrices`;
+export const webRxPricesUrl = (name) => `${API_URL}rxPrices/Fetch/${name}`;
+export const findRxPricesUrl = (name) => `${API_URL}rxPrices/Price/Mg/${name}`;
 
 export default rxPricesSlice.reducer;

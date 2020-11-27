@@ -90,8 +90,8 @@ namespace RxData.Controllers
             return Ok(await _rxPriceRepository.FindMedication(name, location, price));
         }
 
-        // GET: api/RxPrices/Price/Mg
-        [HttpGet("Price/Mg")]
+        // GET: api/RxPrices/Price/Mg/Baclofen
+        [HttpGet("Price/Mg/{name}")]
         public async Task<ActionResult<IEnumerable<RxPrice>>> GetRxPricesPerMg(string name)
         {
             var rxPrices = await _rxPriceRepository.GetMedication(name);

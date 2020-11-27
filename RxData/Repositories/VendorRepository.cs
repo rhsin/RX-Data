@@ -44,8 +44,8 @@ namespace RxData.Repositories
                     Name = v.Name,
                     Url = v.Url,
                     RxPrices = v.RxPrices
-                        .Where(rp => rp.Name.Contains(medication))
-                        .Where(rp => rp.Location.Contains(location))
+                        .Where(rp => rp.Name.ToLower().Contains(medication.ToLower()))
+                        .Where(rp => rp.Location.ToLower().Contains(location.ToLower()))
                         .OrderBy(rp => rp.Name)
                         .ToList()
                 })

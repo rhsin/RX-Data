@@ -42,13 +42,13 @@ namespace RxData.Repositories
 
         public async Task<IEnumerable<RxPrice>> GetAll()
         {
-            return await _context.RxPrices.Take(10).ToListAsync();
+            return await _context.RxPrices.ToListAsync();
         }
 
         public async Task<IEnumerable<RxPrice>> GetMedication(string name)
         {
             return await _context.RxPrices
-                .Where(rp => rp.Name == name.ToLower())
+                .Where(rp => rp.Name.ToLower().Contains(name.ToLower()))
                 .ToListAsync();
         }
 
@@ -77,7 +77,7 @@ namespace RxData.Repositories
                 {
                     Method = $"Find All: {name}",
                     Count = rxPrices.Count(),
-                    RxPrices = rxPrices.Take(10)
+                    RxPrices = rxPrices
                 };
 
                 return rxPriceDTO;

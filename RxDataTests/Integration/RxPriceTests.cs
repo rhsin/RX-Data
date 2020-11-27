@@ -144,7 +144,7 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task GetRxPricesPerMg()
         {
-            var response = await _client.GetAsync("api/RxPrices/Price/Mg?name=baclofen");
+            var response = await _client.GetAsync("api/RxPrices/Price/Mg/Baclofen");
             var stringResponse = await response.Content.ReadAsStringAsync();
             var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
