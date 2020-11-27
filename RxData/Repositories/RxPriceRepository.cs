@@ -42,7 +42,7 @@ namespace RxData.Repositories
 
         public async Task<IEnumerable<RxPrice>> GetAll()
         {
-            return await _context.RxPrices.ToListAsync();
+            return await _context.RxPrices.Take(10).ToListAsync();
         }
 
         public async Task<IEnumerable<RxPrice>> GetMedication(string name)
