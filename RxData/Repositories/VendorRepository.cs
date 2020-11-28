@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RxData.Data;
+using RxData.DTO;
 using RxData.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace RxData.Repositories
 {
     public interface IVendorRepository
     {
-        public Task<IEnumerable<Vendor>> GetAll();
-        public Task<IEnumerable<Vendor>> FindBy(string medication, string location);
+        public Task<VendorDTO> GetAll();
+        public Task<VendorDTO> FindBy(string medication, string location);
         public Task SeedVendors();
         public Task Create(Vendor vendor);
         public Task Update(Vendor vendor);
@@ -27,16 +28,25 @@ namespace RxData.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Vendor>> GetAll()
+        public async Task<VendorDTO> GetAll()
         {
-            return await _context.Vendors
+            var vendors = await _context.Vendors
                 .Include(v => v.RxPrices)
                 .ToListAsync();
+
+            var vendorDTO = new VendorDTO
+            {
+                Method = $"Get All Vendors",
+                Count = vendors.Count(),
+                Vendors = vendors
+            };
+
+            return vendorDTO;
         }
 
-        public async Task<IEnumerable<Vendor>> FindBy(string medication, string location)
+        public async Task<VendorDTO> FindBy(string medication, string location)
         {
-            return await _context.Vendors
+            var vendors = await _context.Vendors
                 .Include(v => v.RxPrices)
                 .Select(v => new Vendor
                 {
@@ -50,6 +60,15 @@ namespace RxData.Repositories
                         .ToList()
                 })
                 .ToListAsync();
+
+            var vendorDTO = new VendorDTO
+            {
+                Method = $"Find Vendors By: {medication}, {location}",
+                Count = vendors.Count(),
+                Vendors = vendors
+            };
+
+            return vendorDTO;
         }
 
         public async Task SeedVendors()

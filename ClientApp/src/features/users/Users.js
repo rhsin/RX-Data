@@ -33,7 +33,7 @@ export function Users() {
           <div>{user.id}</div>  
           <div>{user.name}</div>  
           <div>{user.email}</div>  
-          <div>RxPrices: {user.rxPriceUsers.length}</div> 
+          <div>RxPrices: {user.rxPrices.length}</div> 
           <button 
             onClick={() => dispatch(removeRxPrice('2', user.id))}
           >

@@ -103,7 +103,7 @@ namespace RxDataTests.Integration
             var rxPrices = JsonConvert.DeserializeObject<RxPriceDTO>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("Find All: Baclofen", rxPrices.Method);
+            Assert.Equal("Find All RxPrices: Baclofen", rxPrices.Method);
             Assert.True(rxPrices.Count >= 23);
             Assert.True(rxPrices.RxPrices.Any());
             Assert.Contains("baclofen", stringResponse);

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RxData.DTO;
 using RxData.Models;
 using RxData.Repositories;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +21,7 @@ namespace RxData.Controllers
 
         // GET: api/Vendors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()
+        public async Task<ActionResult<VendorDTO>> GetVendors()
         {
             return Ok(await _vendorRepository.GetAll());
         }
@@ -31,7 +31,7 @@ namespace RxData.Controllers
         public async Task<ActionResult<Vendor>> GetVendor(int id)
         {
             var vendors = await _vendorRepository.GetAll();
-            var vendor = vendors.FirstOrDefault(vendor => vendor.Id == id);
+            var vendor = vendors.Vendors.FirstOrDefault(vendor => vendor.Id == id);
 
             if (vendor == null)
             {
@@ -43,7 +43,7 @@ namespace RxData.Controllers
 
         // GET: api/Vendors/Find
         [HttpGet("Find")]
-        public async Task<ActionResult<IEnumerable<Vendor>>> FindVendors(string medication,
+        public async Task<ActionResult<VendorDTO>> FindVendors(string medication,
             string location)
         {
             return Ok(await _vendorRepository.FindBy(medication, location));

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using RxData.DTO;
 using RxData.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -24,10 +24,11 @@ namespace RxDataTests.Integration
         {
             var response = await _client.GetAsync("api/Vendors");
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var vendors = JsonConvert.DeserializeObject<List<Vendor>>(stringResponse);
+            var vendors = JsonConvert.DeserializeObject<VendorDTO>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(vendors.Count() >= 3);
+            Assert.Equal("Get All Vendors", vendors.Method);
+            Assert.True(vendors.Vendors.Count() >= 3);
             Assert.Contains("SingleCare", stringResponse);
             Assert.Contains("CanadaRx24h", stringResponse);
             Assert.Contains("baclofen", stringResponse);
@@ -52,12 +53,13 @@ namespace RxDataTests.Integration
         {
             var response = await _client.GetAsync("api/Vendors/Find?medication=sone&location=wal");
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var vendors = JsonConvert.DeserializeObject<List<Vendor>>(stringResponse);
+            var vendors = JsonConvert.DeserializeObject<VendorDTO>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(vendors.Count() >= 3);
+            Assert.Equal("Find Vendors By: sone, wal", vendors.Method);
+            Assert.True(vendors.Count >= 3);
+            Assert.True(vendors.Vendors.Count() >= 3);
             Assert.Contains("prednisone", stringResponse);
-            Assert.Contains("walgreens", stringResponse);
             Assert.Contains("walmart", stringResponse);
         }
 

@@ -75,7 +75,7 @@ namespace RxData.Repositories
 
                 var rxPriceDTO = new RxPriceDTO
                 {
-                    Method = $"Find All: {name}",
+                    Method = $"Find All RxPrices: {name}",
                     Count = rxPrices.Count(),
                     RxPrices = rxPrices
                 };

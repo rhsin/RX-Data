@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RxData.DTO;
 using RxData.Models;
 using System.Net;
@@ -44,7 +43,7 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task BadRequestError()
         {
-            var user = new User { Id = 500, Name = "T", Email = "test.com" };
+            var user = new User { Id = 500, Name = "T", Email = "t@test.com" };
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -68,18 +67,16 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task ValidatonError()
         {
-            var user = new User { Name = "T", Email = "test.com" };
+            var user = new UserDTO { Name = "T", Email = "t@test.com" };
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync("api/Users", data);
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var error = JObject.Parse(stringResponse);
+            var error = JsonConvert.DeserializeObject<Error>(stringResponse);
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("One or more validation errors occurred.", error["title"]);
-            Assert.NotEmpty(error["errors"]["Name"]);
-            Assert.Contains("minimum length of 3", stringResponse);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.Contains("An error occurred while updating the entries.", error.Message);
         }
 
         [Fact]

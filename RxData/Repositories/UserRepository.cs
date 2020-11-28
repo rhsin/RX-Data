@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RxData.Data;
+using RxData.DTO;
 using RxData.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace RxData.Repositories
 {
     public interface IUserRepository
     {
-        public Task<IEnumerable<User>> GetAll();
+        public Task<IEnumerable<UserDTO>> GetAll();
         public Task AddRxPrice(int rxPriceId, int userId);
         public Task RemoveRxPrice(int rxPriceId, int userId);
-        public Task Create(User user);
-        public Task Update(User user);
+        public Task Create(UserDTO userDTO);
+        public Task Update(UserDTO userDTO);
         public Task Delete(int id);
     }
 
@@ -26,11 +27,18 @@ namespace RxData.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<UserDTO>> GetAll()
         {
             return await _context.Users
                 .Include(u => u.RxPriceUsers)
                 .ThenInclude(rp => rp.RxPrice)
+                .Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    RxPrices = u.RxPriceUsers
+                })
                 .ToListAsync();
         }
 
@@ -56,8 +64,16 @@ namespace RxData.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task Create(User user)
+        public async Task Create(UserDTO userDTO)
         {
+            var user = new User
+            {
+                Id = userDTO.Id,
+                Name = userDTO.Name,
+                Email = userDTO.Email,
+                Role = "User"
+            };
+
             _context.Users.Add(user);
             await _context.Database.OpenConnectionAsync();
 
@@ -73,8 +89,16 @@ namespace RxData.Repositories
             }
         }
 
-        public async Task Update(User user)
+        public async Task Update(UserDTO userDTO)
         {
+            var user = new User
+            {
+                Id = userDTO.Id,
+                Name = userDTO.Name,
+                Email = userDTO.Email,
+                Role = "User"
+            };
+
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }

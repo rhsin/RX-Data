@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using RxData.Models;
+using RxData.DTO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -25,7 +25,7 @@ namespace RxDataTests.Integration
         {
             var response = await _client.GetAsync("api/Users");
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var users = JsonConvert.DeserializeObject<List<User>>(stringResponse);
+            var users = JsonConvert.DeserializeObject<List<UserDTO>>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(users.Count() >= 1);
@@ -39,14 +39,13 @@ namespace RxDataTests.Integration
         {
             var response = await _client.GetAsync($"api/Users/1");
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var user = JsonConvert.DeserializeObject<User>(stringResponse);
+            var user = JsonConvert.DeserializeObject<UserDTO>(stringResponse);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, user.Id);
             Assert.Equal("Admin", user.Name);
             Assert.Equal("admin@test.com", user.Email);
-            Assert.Equal("Admin", user.Role);
-            Assert.True(user.RxPriceUsers.Count() >= 1);
+            Assert.True(user.RxPrices.Count() >= 1);
         }
 
         [Fact]
@@ -72,17 +71,16 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task PutUser()
         {
-            var user = new User
+            var user = new UserDTO
             {
-                Id = 1,
-                Name = "Admin",
-                Email = "admin@test.com",
-                Role = "Admin"
+                Id = 500,
+                Name = "User",
+                Email = "user@test.com"
             };
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _client.PutAsync("api/Users/1", data);
+            var response = await _client.PutAsync("api/Users/500", data);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
@@ -90,12 +88,11 @@ namespace RxDataTests.Integration
         [Fact]
         public async Task PostUser()
         {
-            var user = new User
+            var user = new UserDTO
             {
-                Id = 500,
-                Name = "Guest",
-                Email = "guest@test.com",
-                Role = "Guest"
+                Id = 600,
+                Name = "NewUser",
+                Email = "newuser@test.com"
             };
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -104,13 +101,13 @@ namespace RxDataTests.Integration
             var stringResponse = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.Contains("Guest", stringResponse);
+            Assert.Contains("NewUser", stringResponse);
         }
 
         [Fact]
         public async Task DeleteUser()
         {
-            var response = await _client.DeleteAsync("api/Users/500");
+            var response = await _client.DeleteAsync("api/Users/600");
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
