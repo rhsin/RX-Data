@@ -39,9 +39,15 @@ export const usersSlice = createSlice({
       state.status = 'failed';
       state.error = action.error.message;
     },
+    [addRxPrice.pending]: (state, action) => {
+      state.status = 'loading';
+    },
     [addRxPrice.fulfilled]: (state, action) => {
       state.status = 'idle';
       state.message = action.payload;
+    },
+    [removeRxPrice.pending]: (state, action) => {
+      state.status = 'loading';
     },
     [removeRxPrice.fulfilled]: (state, action) => {
       state.status = 'idle';

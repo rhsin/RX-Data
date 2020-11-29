@@ -11,4 +11,6 @@ Object.defineProperty(window, 'matchMedia', {
   }
 });
 
+// window.alert = jest.fn();
+
 // jest.spyOn(global.console, 'log').mockImplementation(jest.fn());

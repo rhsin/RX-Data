@@ -1,12 +1,7 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Table, Button } from 'antd';
-import { removeRxPrice, selectUsers } from './usersSlice';
 
-export function UserTable() {
-  const users = useSelector(selectUsers);
-  const dispatch = useDispatch();
-
+export function UserTable({ users }) {
   const columns = [
     {
       title: 'Id',
@@ -29,17 +24,20 @@ export function UserTable() {
       render: (text, record) => (
         <Button 
           type='primary'
-          shape= 'round'
-          onClick={() => dispatch(removeRxPrice('2', record.id))}
+          shape= 'circle'
+          onClick={() => console.log(record.id)}
         >
-          -
+          A
         </Button> 
       )
     }
   ];
 
   return (
-    <Table columns={columns} dataSource={users} />
+    <Table 
+      columns={columns} 
+      dataSource={users} 
+    />
   );
 }
 

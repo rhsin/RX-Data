@@ -5,12 +5,12 @@ import { API_URL } from '../../constants';
 
 export const fetchRxPrices = createAsyncThunk('rxPrices/fetchRxPrices', async (url) => {
   const response = await axios.get(url);
-  return response.data.slice(0, 5);
+  return response.data;
 });
 
 export const findRxPrices = createAsyncThunk('rxPrices/findRxPrices', async (name) => {
   const response = await axios.get(`${API_URL}/rxPrices/find/${name}`);
-  const rxPrices = await response.data.rxPrices.slice(0, 5);
+  const rxPrices = await response.data.rxPrices;
   return rxPrices.map(rxPrice => lowercaseKeys(rxPrice));
 });
 

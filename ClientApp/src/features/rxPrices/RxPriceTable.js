@@ -1,13 +1,7 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Table, Button } from 'antd';
-import { selectRxPrices } from './rxPricesSlice';
-import { addRxPrice } from '../users/usersSlice';
 
-export function RxPriceTable() {
-  const rxPrices = useSelector(selectRxPrices);
-  const dispatch = useDispatch();
-
+export function RxPriceTable({ rxPrices, handleRxPrice }) {
   const columns = [
     {
       title: 'Id',
@@ -20,9 +14,29 @@ export function RxPriceTable() {
       key: 'name',
     },
     {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      key: 'quantity',
+    },
+    {
+      title: 'Dose',
+      dataIndex: 'dose',
+      key: 'dose',
+    },
+    {
       title: 'Price',
       dataIndex: 'price',
       key: 'price',
+    },
+    {
+      title: 'Location',
+      dataIndex: 'location',
+      key: 'location',
+    },
+    {
+      title: 'Vendor',
+      dataIndex: ['vendor', 'name'],
+      key: 'vendor',
     },
     {
       title: 'Action',
@@ -30,17 +44,20 @@ export function RxPriceTable() {
       render: (text, record) => (
         <Button 
           type='primary'
-          shape= 'round'
-          onClick={() => dispatch(addRxPrice(record.id, '1'))}
+          shape= 'circle'
+          onClick={() => handleRxPrice(record.id)}
         >
-          +
+          A
         </Button> 
       )
     }
   ];
 
   return (
-    <Table columns={columns} dataSource={rxPrices} />
+    <Table 
+      columns={columns}
+      dataSource={rxPrices}
+    />
   );
 }
 

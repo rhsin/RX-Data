@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Spin } from 'antd';
 import { UserTable } from './UserTable';
+import { RxPriceTable } from '../rxPrices/RxPriceTable';
 import {
   fetchUsers,
+  removeRxPrice,
   selectUsers,
   selectStatus,
   selectMessage
@@ -20,13 +23,19 @@ export function Users() {
     }
   }, [users, status, dispatch]);
 
+  const rxPrices = users[0] && users[0].rxPrices.map(item => item.rxPrice);
+
+  const deleteRxPrice = (id) => dispatch(removeRxPrice(id, '1'));
+
   return (
     <div>
-      <div>Status: {status}</div>
-      <div>Count: {users.length}</div>
-      {status === 'loading' && <div>Loading...</div>}
+      {status === 'loading' && <div>Loading <Spin /></div>}
       {message && <div>{message}</div>}
-      <UserTable />
+      <UserTable users={users} />
+      <RxPriceTable 
+        rxPrices={rxPrices} 
+        handleRxPrice={id => deleteRxPrice(id)}
+      />
     </div>
   );
 }

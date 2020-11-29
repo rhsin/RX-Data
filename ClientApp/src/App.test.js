@@ -37,7 +37,7 @@ test('renders rxPrice table headings', async () => {
     </Provider>
   );
   
-  expect(screen.getByText(/Price/i)).toBeInTheDocument();
+  expect(screen.getAllByText(/Vendor/i)).toHaveLength(2);
 });
 
 test('renders medication search input', async () => {
@@ -48,4 +48,14 @@ test('renders medication search input', async () => {
   );
   
   expect(screen.getByPlaceholderText(/Enter Medication/i)).toBeInTheDocument();
+});
+
+test('renders medication find button', async () => {
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+  
+  expect(screen.getByRole('button', {name: 'Find'})).toBeInTheDocument();
 });

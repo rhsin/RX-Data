@@ -31,7 +31,8 @@ namespace RxData.Repositories
         {
             return await _context.Users
                 .Include(u => u.RxPriceUsers)
-                .ThenInclude(rp => rp.RxPrice)
+                .ThenInclude(ru => ru.RxPrice)
+                .ThenInclude(rp => rp.Vendor)
                 .Select(u => new UserDTO
                 {
                     Id = u.Id,

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Input, Button } from 'antd';
+import { Input, Button, Spin } from 'antd';
 import { RxPriceTable } from './RxPriceTable';
+import { addRxPrice } from '../users/usersSlice';
 import {
   fetchRxPrices,
   findRxPrices,
@@ -24,10 +25,10 @@ export function RxPrices() {
     }
   }, [status, dispatch]);
 
+  const saveRxPrice = (id) => dispatch(addRxPrice(id, '1'));
+
   return (
     <div>
-      <div>Status: {status}</div>
-      <div>Count: {rxPrices.length}</div>
       <Input
         onChange={e => setName(e.target.value)}
         size = 'large'
@@ -54,8 +55,11 @@ export function RxPrices() {
       >
         Update
       </Button>
-      {status === 'loading' && <div>Loading...</div>}
-      <RxPriceTable />
+      {status === 'loading' && <div>Loading <Spin /></div>}
+      <RxPriceTable 
+        rxPrices={rxPrices} 
+        handleRxPrice={id => saveRxPrice(id)}
+      />
     </div>
   );
 }
