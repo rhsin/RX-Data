@@ -44,6 +44,12 @@ namespace RxData.Services
 
             var rxPrices = new List<RxPrice>();
 
+            var vendor = new Vendor 
+            {
+                Name = "SingleCare",
+                Url = "https://www.singlecare.com" 
+            };
+
             foreach (var e in elements)
             {
                 var price = this.GetFloat(e.QuerySelector("p.pharmacy-item__price")?.TextContent);
@@ -58,7 +64,8 @@ namespace RxData.Services
                         Dose = dose,
                         Price = price,
                         Location = location,
-                        VendorId = 1
+                        VendorId = 1,
+                        Vendor = vendor
                     });
                 }
             }
@@ -79,6 +86,12 @@ namespace RxData.Services
 
             var rxPrices = new List<RxPrice>();
 
+            var vendor = new Vendor 
+            {
+                Name = "CanadaRx24h",
+                Url = "https://canadarx24h.com"
+            };
+
             foreach (var e in elements)
             {
                 var quantity = this.GetInteger(e.QuerySelectorAll("span.table__price_bold")
@@ -98,7 +111,8 @@ namespace RxData.Services
                         Dose = dose,
                         Price = price,
                         Location = "online",
-                        VendorId = 2
+                        VendorId = 2,
+                        Vendor = vendor
                     });
                 }
             }
@@ -119,6 +133,12 @@ namespace RxData.Services
 
             var rxPrices = new List<RxPrice>();
 
+            var vendor = new Vendor 
+            { 
+                Name = "OnlinePharmCanada",
+                Url = "https://www.onlinepharmaciescanada.com" 
+            };
+
             foreach (var e in elements)
             {
                 var quantity = this.GetInteger(e.QuerySelector("div.productqty")?.TextContent);
@@ -134,7 +154,8 @@ namespace RxData.Services
                         Dose = dose,
                         Price = price,
                         Location = "online",
-                        VendorId = 1002
+                        VendorId = 1002,
+                        Vendor = vendor
                     });
                 }
             }

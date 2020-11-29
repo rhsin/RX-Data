@@ -10,6 +10,7 @@ import {
   selectStatus,
   rxPricesUrl,
   webRxPricesUrl,
+  webAltRxPricesUrl,
   findRxPricesUrl
 } from './rxPricesSlice';
 
@@ -54,6 +55,13 @@ export function RxPrices() {
         onClick={() => dispatch(fetchRxPrices(webRxPricesUrl(name)))}
       >
         Update
+      </Button>
+      <Button
+        type='primary'
+        shape= 'round'
+        onClick={() => dispatch(fetchRxPrices(webAltRxPricesUrl(name)))}
+      >
+        Update(Alt)
       </Button>
       {status === 'loading' && <div>Loading <Spin /></div>}
       <RxPriceTable 

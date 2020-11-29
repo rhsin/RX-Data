@@ -48,6 +48,7 @@ export const selectStatus = state => state.rxPrices.status;
 
 export const rxPricesUrl = `${API_URL}/rxPrices`;
 export const webRxPricesUrl = (name) => `${API_URL}/rxPrices/Fetch/Canada/${name}`;
+export const webAltRxPricesUrl = (name) => `${API_URL}/rxPrices/Fetch/Alt/Canada/${name}`;
 export const findRxPricesUrl = (name) => `${API_URL}/rxPrices/Price/Mg/${name}`;
 
 export default rxPricesSlice.reducer;

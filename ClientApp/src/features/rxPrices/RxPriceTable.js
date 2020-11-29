@@ -19,7 +19,7 @@ export function RxPriceTable({ rxPrices, handleRxPrice }) {
       key: 'quantity',
     },
     {
-      title: 'Dose',
+      title: 'Dose(mg)',
       dataIndex: 'dose',
       key: 'dose',
     },

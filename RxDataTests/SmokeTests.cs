@@ -18,7 +18,6 @@ namespace RxDataTests
         [Theory]
         [InlineData("api/RxPrices")]
         [InlineData("api/RxPrices/1")]
-        //[InlineData("api/RxPrices/Fetch/Baclofen")]
         [InlineData("api/RxPrices/Fetch/Canada/Baclofen")]
         [InlineData("api/RxPrices/Fetch/Alt/Canada/Prednisone")]
         [InlineData("api/RxPrices/Find/Baclofen")]
@@ -30,6 +29,7 @@ namespace RxDataTests
         [InlineData("api/Vendors")]
         [InlineData("api/Vendors/1")]
         [InlineData("api/Vendors/Find?medication=sone&location=wal")]
+        //[InlineData("api/RxPrices/Fetch/Baclofen")]
         public async Task TestGetEndpoints(string url)
         {
             var response = await _client.GetAsync(url);

@@ -13,19 +13,6 @@ namespace RxDataTests.Unit
             _webScraper = new WebScraper();
         }
 
-        //[Fact]
-        //public void GetRxPrices()
-        //{
-        //    var rxPrices = _webScraper.GetRxPrices("Baclofen").Result;
-
-        //    Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
-        //    Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
-        //    Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 5));
-        //    Assert.All(rxPrices, rp => Assert.True(rp.Price >= 12));
-        //    Assert.All(rxPrices, rp => Assert.NotNull(rp.Location));
-        //    Assert.All(rxPrices, rp => Assert.Equal(1, rp.VendorId));
-        //}
-
         [Fact]
         public void GetRxPricesCanada()
         {
@@ -73,5 +60,18 @@ namespace RxDataTests.Unit
 
             Assert.Equal(15.50, result);
         }
+
+        //[Fact]
+        //public void GetRxPrices()
+        //{
+        //    var rxPrices = _webScraper.GetRxPrices("Baclofen").Result;
+
+        //    Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
+        //    Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
+        //    Assert.All(rxPrices, rp => Assert.True(rp.Dose >= 5));
+        //    Assert.All(rxPrices, rp => Assert.True(rp.Price >= 12));
+        //    Assert.All(rxPrices, rp => Assert.NotNull(rp.Location));
+        //    Assert.All(rxPrices, rp => Assert.Equal(1, rp.VendorId));
+        //}
     }
 }

@@ -151,11 +151,11 @@ namespace RxData.Repositories
 
         public async Task SeedRxPrices(string medication)
         {
-            var rxPrices = await _webScraper.GetRxPrices(medication);
+            //var rxPrices = await _webScraper.GetRxPrices(medication);
             var rxPricesCanada = await _webScraper.GetRxPricesCanada(medication);
             var rxPricesCanadaAlt = await _webScraper.GetRxPricesCanadaAlt(medication);
 
-            _context.RxPrices.AddRange(rxPrices);
+            //_context.RxPrices.AddRange(rxPrices);
             _context.RxPrices.AddRange(rxPricesCanada);
             _context.RxPrices.AddRange(rxPricesCanadaAlt);
             await _context.SaveChangesAsync();
