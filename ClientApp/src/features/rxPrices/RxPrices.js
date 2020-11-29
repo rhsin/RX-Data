@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Input, Button } from 'antd';
-import { addRxPrice } from '../users/usersSlice';
+import { RxPriceTable } from './RxPriceTable';
 import {
   fetchRxPrices,
   findRxPrices,
@@ -26,7 +26,6 @@ export function RxPrices() {
 
   return (
     <div>
-      <div>RxPrices</div>
       <div>Status: {status}</div>
       <div>Count: {rxPrices.length}</div>
       <Input
@@ -46,7 +45,7 @@ export function RxPrices() {
         shape= 'round'
         onClick={() => dispatch(fetchRxPrices(findRxPricesUrl(name)))}
       >
-        Price/Mg
+        $/Mg
       </Button>
       <Button
         type='primary'
@@ -56,20 +55,7 @@ export function RxPrices() {
         Update
       </Button>
       {status === 'loading' && <div>Loading...</div>}
-      {rxPrices.map(rxPrice => 
-        <div key={rxPrice.id}>
-          <div>{rxPrice.id}</div>  
-          <div>{rxPrice.name}</div>  
-          <div>{rxPrice.price}</div>  
-          <Button 
-            type='primary'
-            shape= 'round'
-            onClick={() => dispatch(addRxPrice(rxPrice.id, '1'))}
-          >
-            +
-          </Button> 
-        </div>
-      )}
+      <RxPriceTable />
     </div>
   );
 }

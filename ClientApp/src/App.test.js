@@ -20,6 +20,26 @@ test('renders app & fetches data from API', async () => {
   expect(axios.get).toHaveBeenCalledTimes(2);
 });
 
+test('renders user table headings', async () => {
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+  
+  expect(screen.getByText(/Email/i)).toBeInTheDocument();
+});
+
+test('renders rxPrice table headings', async () => {
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+  
+  expect(screen.getByText(/Price/i)).toBeInTheDocument();
+});
+
 test('renders medication search input', async () => {
   render(
     <Provider store={store}>
