@@ -50,20 +50,20 @@ namespace RxDataTests.Integration
             Assert.Equal(1, rxPrice.VendorId);
         }
 
-        [Fact]
-        public async Task FetchRxPrices()
-        {
-            var response = await _client.GetAsync("api/RxPrices/Fetch/Baclofen");
-            var stringResponse = await response.Content.ReadAsStringAsync();
-            var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
+        //[Fact]
+        //public async Task FetchRxPrices()
+        //{
+        //    var response = await _client.GetAsync("api/RxPrices/Fetch/Baclofen");
+        //    var stringResponse = await response.Content.ReadAsStringAsync();
+        //    var rxPrices = JsonConvert.DeserializeObject<List<RxPrice>>(stringResponse);
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(rxPrices.Count() >= 5);
-            Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
-            Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
-            Assert.All(rxPrices, rp => Assert.True(rp.Price >= 12));
-            Assert.Contains("walmart pharmacy", stringResponse);
-        }
+        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //    Assert.True(rxPrices.Count() >= 5);
+        //    Assert.All(rxPrices, rp => Assert.Equal("baclofen", rp.Name));
+        //    Assert.All(rxPrices, rp => Assert.True(rp.Quantity >= 15));
+        //    Assert.All(rxPrices, rp => Assert.True(rp.Price >= 12));
+        //    Assert.Contains("walmart pharmacy", stringResponse);
+        //}
 
         [Fact]
         public async Task FetchRxPricesCanada()

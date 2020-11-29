@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button } from 'antd';
 import {
   fetchUsers,
   removeRxPrice,
@@ -34,11 +35,13 @@ export function Users() {
           <div>{user.name}</div>  
           <div>{user.email}</div>  
           <div>RxPrices: {user.rxPrices.length}</div> 
-          <button 
+          <Button 
+            type='primary'
+            shape= 'round'
             onClick={() => dispatch(removeRxPrice('2', user.id))}
           >
             -
-          </button> 
+          </Button> 
         </div>
       )}
     </div>

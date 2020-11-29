@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Input, Button } from 'antd';
 import { addRxPrice } from '../users/usersSlice';
 import {
   fetchRxPrices,
@@ -28,33 +29,45 @@ export function RxPrices() {
       <div>RxPrices</div>
       <div>Status: {status}</div>
       <div>Count: {rxPrices.length}</div>
-      <input onChange={e => setName(e.target.value)} />
-      <button 
+      <Input
+        onChange={e => setName(e.target.value)}
+        size = 'large'
+        placeholder='Enter Medication'
+      />
+      <Button 
+        type='primary'
+        shape= 'round'
         onClick={() => dispatch(findRxPrices(name))}
       >
         Find
-      </button>
-      <button 
+      </Button>
+      <Button 
+        type='primary'
+        shape= 'round'
         onClick={() => dispatch(fetchRxPrices(findRxPricesUrl(name)))}
       >
         Price/Mg
-      </button>
-      <button 
+      </Button>
+      <Button
+        type='primary'
+        shape= 'round'
         onClick={() => dispatch(fetchRxPrices(webRxPricesUrl(name)))}
       >
         Update
-      </button>
+      </Button>
       {status === 'loading' && <div>Loading...</div>}
       {rxPrices.map(rxPrice => 
         <div key={rxPrice.id}>
           <div>{rxPrice.id}</div>  
           <div>{rxPrice.name}</div>  
           <div>{rxPrice.price}</div>  
-          <button 
+          <Button 
+            type='primary'
+            shape= 'round'
             onClick={() => dispatch(addRxPrice(rxPrice.id, '1'))}
           >
             +
-          </button> 
+          </Button> 
         </div>
       )}
     </div>

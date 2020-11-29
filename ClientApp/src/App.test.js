@@ -19,3 +19,13 @@ test('renders app & fetches data from API', async () => {
   expect(screen.getByText(/RxData/i)).toBeInTheDocument();
   expect(axios.get).toHaveBeenCalledTimes(2);
 });
+
+test('renders medication search input', async () => {
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+  
+  expect(screen.getByPlaceholderText(/Enter Medication/i)).toBeInTheDocument();
+});

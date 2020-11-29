@@ -18,7 +18,7 @@ namespace RxDataTests
         [Theory]
         [InlineData("api/RxPrices")]
         [InlineData("api/RxPrices/1")]
-        [InlineData("api/RxPrices/Fetch/Baclofen")]
+        //[InlineData("api/RxPrices/Fetch/Baclofen")]
         [InlineData("api/RxPrices/Fetch/Canada/Baclofen")]
         [InlineData("api/RxPrices/Fetch/Alt/Canada/Prednisone")]
         [InlineData("api/RxPrices/Find/Baclofen")]
