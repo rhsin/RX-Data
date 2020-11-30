@@ -1,7 +1,10 @@
 import React from 'react';
 import { Table, Button } from 'antd';
+import { DownloadOutlined, DeleteOutlined } from '@ant-design/icons';
 
-export function RxPriceTable({ rxPrices, handleRxPrice }) {
+export function RxPriceTable(props) {
+  const { action, rxPrices, handleRxPrice } = props;
+
   const columns = [
     {
       title: 'Id',
@@ -39,16 +42,16 @@ export function RxPriceTable({ rxPrices, handleRxPrice }) {
       key: 'vendor',
     },
     {
-      title: 'Action',
+      title: action === 'save' ? 'Add' : 'Remove',
       key: 'action',
       render: (text, record) => (
         <Button 
+          className='btn-action'
           type='primary'
-          shape= 'circle'
+          shape='circle'
+          icon={action === 'save' ? <DownloadOutlined /> : <DeleteOutlined />}
           onClick={() => handleRxPrice(record.id)}
-        >
-          A
-        </Button> 
+        />
       )
     }
   ];

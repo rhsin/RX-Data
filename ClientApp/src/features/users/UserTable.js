@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Button } from 'antd';
+import { IdcardOutlined } from '@ant-design/icons';
 
 export function UserTable({ users }) {
   const columns = [
@@ -19,16 +20,14 @@ export function UserTable({ users }) {
       key: 'email',
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: 'Account',
+      key: 'account',
       render: (text, record) => (
         <Button 
           type='primary'
-          shape= 'circle'
+          icon={<IdcardOutlined />}
           onClick={() => console.log(record.id)}
-        >
-          A
-        </Button> 
+        />
       )
     }
   ];

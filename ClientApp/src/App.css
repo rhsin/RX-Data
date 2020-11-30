@@ -8,29 +8,10 @@
   font-size: x-large;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.btn-search {
+  margin: .65rem .25rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-float infinite 3s ease-in-out;
-  }
-}
-
-.App-link {
-  color: rgb(112, 76, 182);
-}
-
-@keyframes App-logo-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px)
-  }
-  100% {
-    transform: translateY(0px)
-  }
+.btn-action {
+  margin: .15rem;
 }

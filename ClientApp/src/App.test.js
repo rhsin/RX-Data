@@ -57,5 +57,5 @@ test('renders medication find button', async () => {
     </Provider>
   );
   
-  expect(screen.getByRole('button', {name: 'Find'})).toBeInTheDocument();
+  expect(screen.getByRole('button', {name: /Find/i})).toBeInTheDocument();
 });

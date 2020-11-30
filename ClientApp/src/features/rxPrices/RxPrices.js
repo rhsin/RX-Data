@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Input, Button, Spin } from 'antd';
+import { Card, Input, Button, Spin, message as Message } from 'antd';
+import { SearchOutlined, FileSearchOutlined, DollarOutlined } from '@ant-design/icons';
 import { RxPriceTable } from './RxPriceTable';
-import { addRxPrice } from '../users/usersSlice';
+import { addRxPrice, selectMessage } from '../users/usersSlice';
 import {
   fetchRxPrices,
   findRxPrices,
@@ -17,58 +18,70 @@ import {
 export function RxPrices() {
   const rxPrices = useSelector(selectRxPrices);
   const status = useSelector(selectStatus);
+  const message = useSelector(selectMessage);
   const dispatch = useDispatch();
   const [name, setName] = useState('');
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchRxPrices(rxPricesUrl))
+      dispatch(fetchRxPrices(rxPricesUrl));
     }
   }, [status, dispatch]);
 
-  const saveRxPrice = (id) => dispatch(addRxPrice(id, '1'));
+  useEffect(() => {
+    message && Message.success(message, 3);
+  }, [message]);
+
+  const saveRxPrice = (id) => {
+    dispatch(addRxPrice(id, '1'));
+  };
 
   return (
-    <div>
+    <Card title='RxPrices'>
       <Input
         onChange={e => setName(e.target.value)}
         size = 'large'
         placeholder='Enter Medication'
       />
       <Button 
+        className='btn-search'
         type='primary'
-        shape= 'round'
+        icon={<FileSearchOutlined />}
         onClick={() => dispatch(findRxPrices(name))}
       >
         Find
       </Button>
       <Button 
+        className='btn-search'
         type='primary'
-        shape= 'round'
+        icon={<DollarOutlined />}
         onClick={() => dispatch(fetchRxPrices(findRxPricesUrl(name)))}
       >
-        $/Mg
+        Price/Mg
       </Button>
       <Button
+        className='btn-search'
         type='primary'
-        shape= 'round'
+        icon={<SearchOutlined />}
         onClick={() => dispatch(fetchRxPrices(webRxPricesUrl(name)))}
       >
         Update
       </Button>
       <Button
+        className='btn-search'
         type='primary'
-        shape= 'round'
+        icon={<SearchOutlined />}
         onClick={() => dispatch(fetchRxPrices(webAltRxPricesUrl(name)))}
       >
         Update(Alt)
       </Button>
       {status === 'loading' && <div>Loading <Spin /></div>}
       <RxPriceTable 
+        action='save'
         rxPrices={rxPrices} 
         handleRxPrice={id => saveRxPrice(id)}
       />
-    </div>
+    </Card>
   );
 }
 
