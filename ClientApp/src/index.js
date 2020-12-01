@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'antd/dist/antd.css';
-import './index.css';
+import axios from 'axios';
+import { Provider } from 'react-redux';
 import App from './App';
 import store from './app/store';
-import { Provider } from 'react-redux';
+import { AUTH_TOKEN } from './config';
 import * as serviceWorker from './serviceWorker';
+import 'antd/dist/antd.css';
+import './index.css';
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 ReactDOM.render(
   <React.StrictMode>
